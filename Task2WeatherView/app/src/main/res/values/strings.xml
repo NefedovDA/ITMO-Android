@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Task#2 Weather View</string>
+    <string name="presentable_app_name">Weather</string>
+    <string name="weather_description">Weather kind</string>
+    <string name="wind_description">Wind kind</string>
+    <string name="presentable_temp"> %1$d°</string>
+
+    <!-- Mock block -->
+    <string name="mock_temp">25°</string>
+    <string name="mock_city">Saint-Petersburg</string>
+    <string name="mock_weather_kind">Sunny</string>
+    <string name="mock_extra_name">Wind Flow</string>
+    <string name="mock_number">\???</string>
+</resources>

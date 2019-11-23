@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="150dp"
+    android:orientation="vertical"
+
+    >
+
+    <TextView
+        android:id="@+id/value"
+        style="@style/ExtraBlockValue"
+
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.45"
+
+        android:text="@string/mock_number"
+
+        />
+
+    <ImageView
+        android:id="@+id/image"
+
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.30"
+
+        android:contentDescription="@string/mock_weather_kind"
+
+        android:scaleType="fitCenter"
+
+        android:src="@mipmap/ic_launcher"
+
+        />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/ExtraBlockDescription"
+
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+
+        android:text="@string/mock_extra_name"
+
+        />
+
+</LinearLayout>

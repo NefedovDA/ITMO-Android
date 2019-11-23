@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/header_hell"
+
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="@dimen/header_hell_indent"
+
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/today_hell"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="@dimen/today_hell_indent"
+
+        />
+
+    <!-- Header block -->
+
+    <TextView
+        android:id="@+id/header_text"
+        style="@style/Header"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+
+        android:text="@string/mock_city"
+
+        app:layout_constraintBottom_toTopOf="@id/header_hell"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
+
+    <Switch
+        android:id="@+id/switch_theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="@dimen/switch_theme_marginEnd"
+
+        app:layout_constraintBottom_toTopOf="@id/header_hell"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
+
+    <!-- Today block -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintBottom_toTopOf="@id/today_hell"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_hell"
+
+        >
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/today_image_hell"
+
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="@dimen/today_image_hell_indent"
+
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/today_temp_hell"
+
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="@dimen/today_temp_hell_indent"
+
+            />
+
+        <ImageView
+            android:id="@+id/today_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:contentDescription="@string/weather_description"
+
+            android:scaleType="fitCenter"
+
+            android:src="@mipmap/ic_launcher"
+
+            app:layout_constraintBottom_toTopOf="@id/today_image_hell"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
+
+        <TextView
+            android:id="@+id/today_temp"
+            style="@style/TodayTemp"
+            android:layout_height="0dp"
+            android:paddingStart="10dp"
+
+            android:text="@string/mock_temp"
+
+            app:layout_constraintBottom_toTopOf="@id/today_temp_hell"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/today_image_hell"
+            tools:ignore="RtlSymmetry" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:orientation="horizontal"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/today_temp_hell"
+
+            >
+
+            <include
+                android:id="@+id/wind"
+                style="@style/ExtraBlock"
+                layout="@layout/today_extra_block" />
+
+            <include
+                android:id="@+id/perception"
+                style="@style/ExtraBlock"
+                layout="@layout/today_extra_block" />
+
+            <include
+                android:id="@+id/humidity"
+                style="@style/ExtraBlock"
+                layout="@layout/today_extra_block" />
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Week block -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:scrollbars="vertical"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/today_hell" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
