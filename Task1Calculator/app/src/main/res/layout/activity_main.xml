@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    tools:context=".MainActivity"
+
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/base_line_horizontal_middle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+
+        app:layout_constraintGuide_percent="@dimen/outputAreaSize"
+
+        />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:layout_margin="@dimen/outputAreaMargin"
+
+        android:orientation="vertical"
+
+        app:layout_constraintBottom_toTopOf="@id/base_line_horizontal_middle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        >
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+
+            android:scrollbars="none"
+
+            >
+
+            <TextView
+                android:id="@+id/first_line_tv"
+
+                style="@style/OutputLine"
+
+                android:textColor="@color/text_light"
+                android:textSize="@dimen/smallTextSize"
+
+                />
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+
+            android:scrollbars="none"
+
+            >
+
+            <TextView
+                android:id="@+id/second_line_tv"
+
+                style="@style/OutputLine"
+
+                />
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+
+            android:scrollbars="none"
+
+            >
+
+            <TextView
+                android:id="@+id/answer_line_tv"
+
+                style="@style/OutputLine"
+
+                />
+        </HorizontalScrollView>
+
+    </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/base_line_vertical_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75"
+
+        />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+
+        android:background="@color/border_light"
+
+        app:layout_constraintBottom_toTopOf="@id/base_line_horizontal_middle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        />
+
+    <!--  Raw 1 : [7] [8] [9]  -->
+    <TextView
+        android:id="@+id/btn_7"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_7"
+
+        app:layout_constraintBottom_toTopOf="@+id/btn_4"
+        app:layout_constraintEnd_toStartOf="@id/btn_8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/base_line_horizontal_middle"
+
+        />
+
+    <TextView
+        android:id="@+id/btn_8"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_8"
+
+        app:layout_constraintBottom_toTopOf="@id/btn_5"
+        app:layout_constraintEnd_toStartOf="@id/btn_9"
+        app:layout_constraintStart_toEndOf="@id/btn_7"
+        app:layout_constraintTop_toBottomOf="@id/base_line_horizontal_middle"
+
+        />
+
+    <TextView
+        android:id="@+id/btn_9"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_9"
+
+        app:layout_constraintBottom_toTopOf="@id/btn_6"
+        app:layout_constraintEnd_toStartOf="@id/base_line_vertical_end"
+        app:layout_constraintStart_toEndOf="@id/btn_8"
+        app:layout_constraintTop_toBottomOf="@id/base_line_horizontal_middle"
+
+        />
+
+    <!--  Raw 2 : [4] [5] [6] -->
+    <TextView
+        android:id="@+id/btn_4"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_4"
+
+        app:layout_constraintBottom_toTopOf="@+id/btn_1"
+        app:layout_constraintEnd_toStartOf="@id/btn_5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_7"
+
+        />
+
+    <TextView
+        android:id="@+id/btn_5"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_5"
+
+        app:layout_constraintBottom_toTopOf="@id/btn_2"
+        app:layout_constraintEnd_toStartOf="@id/btn_6"
+        app:layout_constraintStart_toEndOf="@id/btn_4"
+        app:layout_constraintTop_toBottomOf="@id/btn_8"
+
+        />
+
+    <TextView
+        android:id="@+id/btn_6"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_6"
+
+        app:layout_constraintBottom_toTopOf="@id/btn_3"
+        app:layout_constraintEnd_toStartOf="@id/base_line_vertical_end"
+        app:layout_constraintStart_toEndOf="@id/btn_5"
+        app:layout_constraintTop_toBottomOf="@id/btn_9"
+
+        />
+
+    <!--  Raw 3 : [1] [2] [3] -->
+    <TextView
+        android:id="@+id/btn_1"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_1"
+
+        app:layout_constraintBottom_toTopOf="@id/btn_0"
+        app:layout_constraintEnd_toStartOf="@id/btn_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_4"
+
+        />
+
+    <TextView
+        android:id="@+id/btn_2"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_2"
+
+        app:layout_constraintBottom_toTopOf="@id/btn_comma"
+        app:layout_constraintEnd_toStartOf="@id/btn_3"
+        app:layout_constraintStart_toEndOf="@id/btn_1"
+        app:layout_constraintTop_toBottomOf="@id/btn_5"
+
+        />
+
+    <TextView
+        android:id="@+id/btn_3"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_3"
+
+        app:layout_constraintBottom_toTopOf="@id/btn_equal"
+        app:layout_constraintEnd_toStartOf="@id/base_line_vertical_end"
+        app:layout_constraintStart_toEndOf="@id/btn_2"
+        app:layout_constraintTop_toBottomOf="@id/btn_6"
+
+        />
+
+    <!-- Raw 4 : [0] [,] [=] -->
+    <TextView
+        android:id="@+id/btn_0"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_0"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_comma"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_1"
+
+        />
+
+    <TextView
+        android:id="@+id/btn_comma"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_comma"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_equal"
+        app:layout_constraintStart_toEndOf="@id/btn_0"
+        app:layout_constraintTop_toBottomOf="@id/btn_2"
+
+        />
+
+    <TextView
+        android:id="@+id/btn_equal"
+
+        style="@style/DefaultButton"
+        android:layout_width="0dp"
+
+        android:layout_height="0dp"
+
+        android:text="@string/btn_equal"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/base_line_vertical_end"
+        app:layout_constraintStart_toEndOf="@id/btn_comma"
+        app:layout_constraintTop_toBottomOf="@id/btn_3"
+
+        />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+
+        android:background="@color/border_light"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/base_line_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/base_line_horizontal_middle"
+
+        />
+
+    <!-- Operations column -->
+
+    <!-- Group 1: [C] [␡] -->
+    <LinearLayout
+        android:id="@+id/operation_box_1"
+
+        style="@style/OperationGroupOrientation"
+
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintBottom_toTopOf="@id/operation_box_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/base_line_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/base_line_horizontal_middle"
+
+        >
+
+        <TextView
+            android:id="@+id/btn_delete"
+
+            style="@style/OperationButton"
+
+            android:layout_weight="1"
+            android:text="@string/btn_delete"
+
+            />
+
+        <TextView
+            android:id="@+id/btn_clean"
+
+            style="@style/OperationButton"
+
+            android:layout_weight="1"
+            android:text="@string/btn_clean"
+
+            />
+
+    </LinearLayout>
+
+    <!--  Group 2: [÷] [×] -->
+    <LinearLayout
+        android:id="@+id/operation_box_2"
+
+        style="@style/OperationGroupOrientation"
+
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintBottom_toTopOf="@id/operation_box_3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/base_line_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/operation_box_1"
+
+        >
+
+        <TextView
+            android:id="@+id/btn_div"
+
+            style="@style/OperationButton"
+
+            android:layout_weight="1"
+            android:text="@string/btn_div"
+
+            />
+
+        <TextView
+            android:id="@+id/btn_mull"
+
+            style="@style/OperationButton"
+
+            android:layout_weight="1"
+            android:text="@string/btn_mull"
+
+            />
+
+    </LinearLayout>
+
+    <!--  Group 3: [−] [+] -->
+    <LinearLayout
+        android:id="@+id/operation_box_3"
+
+        style="@style/OperationGroupOrientation"
+
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/base_line_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/operation_box_2"
+
+        >
+
+        <TextView
+            android:id="@+id/btn_minus"
+
+            style="@style/OperationButton"
+
+            android:layout_weight="1"
+            android:text="@string/btn_minus"
+
+            />
+
+        <TextView
+            android:id="@+id/btn_plus"
+
+            style="@style/OperationButton"
+
+            android:layout_weight="1"
+            android:text="@string/btn_plus"
+
+            />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

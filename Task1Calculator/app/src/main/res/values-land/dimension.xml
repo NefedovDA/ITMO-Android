@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bigTextSize">35sp</dimen>
+    <dimen name="smallTextSize">22sp</dimen>
+
+    <dimen name="outputAreaSize">0.444</dimen>
+    <dimen name="outputAreaMargin">6dp</dimen>
+
+    <dimen name="buttonTextSize">30sp</dimen>
+</resources>
