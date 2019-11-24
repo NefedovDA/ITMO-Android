@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Task#2 Weather View</string>
+    <string name="appName">Погода</string>
+    <string name="humidityDescription">Влажность</string>
+    <string name="pressureDescription">Давление воздуха</string>
+    <string name="windDescription">Сила ветра</string>
+    <string name="template_windPower">%1$.1f км/ч</string>
+    <string name="template_pressure">%1$d мбар</string>
+</resources>
