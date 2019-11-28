@@ -11,6 +11,8 @@
     <dimen name="today_City_textSize">35sp</dimen>
     <dimen name="today_extra_textSize">20sp</dimen>
 
+    <dimen name="week_day_text_textSize">20sp</dimen>
+
     <dimen name="divider_margin">8dp</dimen>
     <dimen name="divider_weight">1dp</dimen>
     <dimen name="week_day_height">80dp</dimen>

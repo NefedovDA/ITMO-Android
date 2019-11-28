@@ -24,6 +24,15 @@ class DayAdapter(
 
     override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
         holder.descriptionText.text = DESCRIPTION_FORMATTER.format(days[position].date)
+        holder.image.setImageResource(
+            listOf(
+                R.drawable._028_snowfall,
+                R.drawable._001_cloudy,
+                R.drawable._004_storm,
+                R.drawable._022_sun,
+                R.drawable._045_eclipse
+            )[(Math.random() * 5).toInt()]
+        )
         holder.tempText.text = context.getString(R.string.template_tempC, 12)
     }
 
