@@ -1,4 +1,4 @@
-package ru.ifmo.nefedov.task4imageslist.utils
+package ru.ifmo.nefedov.task4imageslist.model
 
 import android.content.Context
 import android.content.res.AssetManager
