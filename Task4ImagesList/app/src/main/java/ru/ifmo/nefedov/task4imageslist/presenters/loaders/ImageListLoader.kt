@@ -13,7 +13,7 @@ import java.net.URL
 
 abstract class ImageListLoader(private val imagesAdapter: ImagesAdapter) :
     AsyncTask<Any, Void, List<Image>>() {
-    protected val imageCount: Int = 10
+    protected val imageCount: Int = 30
 
     protected abstract val baseUrl: String
 
@@ -28,11 +28,6 @@ abstract class ImageListLoader(private val imagesAdapter: ImagesAdapter) :
 
         val jsonResult = JSONArray(result)
         return List(jsonResult.length()) { parseJsonImage(jsonResult.getJSONObject(it)) }
-    }
-
-    protected fun loadImage(url: String): Bitmap {
-        val imageBytes = URL(url).openStream().readBytes()
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
     override fun onPostExecute(result: List<Image>?) {
@@ -61,14 +56,12 @@ private class UnsplashImpl(imagesAdapter: ImagesAdapter) : ImageListLoader(image
 
     override fun parseJsonImage(jsonImage: JSONObject): Image {
         val jsonUrls = jsonImage.getJSONObject("urls")
-        val smallUrl = jsonUrls.getString("small")
         return Image(
             id = jsonImage.getString("id"),
             description = jsonImage.getString("description").nullIfNull(),
             author = null,//jsonImage.getString("author").nullIfNull(),
-            bitmap = loadImage(smallUrl),
             regularUrl = jsonUrls.getString("regular"),
-            smallUrl = smallUrl,
+            smallUrl = jsonUrls.getString("small"),
             thumbUrl = jsonUrls.getString("thumb")
         )
     }
