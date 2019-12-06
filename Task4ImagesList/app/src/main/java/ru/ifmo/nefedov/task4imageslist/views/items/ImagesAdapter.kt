@@ -29,7 +29,7 @@ class ImagesAdapter : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
     override fun getItemCount(): Int = images.size
 
     override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
-        holder.imageView.setImageBitmap(images[position].bitmap)
+        //holder.imageView.setImageBitmap(images[position].bitmap)
     }
 
     fun setImages(images: List<Image>) {

@@ -1,23 +1,34 @@
 package ru.ifmo.nefedov.task4imageslist.presenters.loaders
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.ifmo.nefedov.task4imageslist.model.ApiKey
 import ru.ifmo.nefedov.task4imageslist.model.Image
 import ru.ifmo.nefedov.task4imageslist.model.UnsplashKeys
 import ru.ifmo.nefedov.task4imageslist.views.items.ImagesAdapter
 import java.net.URL
 
-abstract class ImageListLoader(private val imagesAdapter: ImagesAdapter) :
+class ImageListLoader(private val imagesAdapter: ImagesAdapter) :
     AsyncTask<Any, Void, List<Image>>() {
-    protected val imageCount: Int = 30
+    private val imageCount: Int = 30
 
-    protected abstract val baseUrl: String
+    private val baseUrl: String =
+        "https://api.unsplash.com/photos/" +
+                "?page=1" +
+                "&per_page=$imageCount" +
+                "&client_id=${UnsplashKeys.ACCESS_KEY}"
 
-    protected abstract fun parseJsonImage(jsonImage: JSONObject): Image
+    private fun parseJsonImage(jsonImage: JSONObject): Image {
+        val jsonUrls = jsonImage.getJSONObject("urls")
+        return Image(
+            id = jsonImage.getString("id"),
+            description = jsonImage.getString("description").nullIfNull(),
+            author = null,//jsonImage.getString("author").nullIfNull(),
+            regularUrl = jsonUrls.getString("regular"),
+            smallUrl = jsonUrls.getString("small"),
+            thumbUrl = jsonUrls.getString("thumb")
+        )
+    }
 
     override fun doInBackground(vararg params: Any): List<Image> {
         val result = URL(baseUrl)
@@ -36,33 +47,5 @@ abstract class ImageListLoader(private val imagesAdapter: ImagesAdapter) :
         }
     }
 
-    companion object {
-        operator fun invoke(apiKey: ApiKey, imagesAdapter: ImagesAdapter): ImageListLoader =
-            when (apiKey) {
-                ApiKey.UNSPLASH_API_KEY -> UnsplashImpl(imagesAdapter)
-                ApiKey.VK_API_KEY -> TODO()
-            }
-    }
-}
-
-private fun String.nullIfNull(): String? = if (this == "null") null else this
-
-private class UnsplashImpl(imagesAdapter: ImagesAdapter) : ImageListLoader(imagesAdapter) {
-    override val baseUrl: String =
-        "https://api.unsplash.com/photos/" +
-                "?page=1" +
-                "&per_page=$imageCount" +
-                "&client_id=${UnsplashKeys.ACCESS_KEY}"
-
-    override fun parseJsonImage(jsonImage: JSONObject): Image {
-        val jsonUrls = jsonImage.getJSONObject("urls")
-        return Image(
-            id = jsonImage.getString("id"),
-            description = jsonImage.getString("description").nullIfNull(),
-            author = null,//jsonImage.getString("author").nullIfNull(),
-            regularUrl = jsonUrls.getString("regular"),
-            smallUrl = jsonUrls.getString("small"),
-            thumbUrl = jsonUrls.getString("thumb")
-        )
-    }
+    private fun String.nullIfNull(): String? = if (this == "null") null else this
 }

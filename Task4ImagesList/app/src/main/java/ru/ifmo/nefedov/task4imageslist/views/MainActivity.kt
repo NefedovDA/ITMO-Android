@@ -1,12 +1,10 @@
 package ru.ifmo.nefedov.task4imageslist.views
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.ifmo.nefedov.task4imageslist.R
-import ru.ifmo.nefedov.task4imageslist.model.ApiKey
-import ru.ifmo.nefedov.task4imageslist.model.ApiKey.Companion.API_KEY
 import ru.ifmo.nefedov.task4imageslist.presenters.MainActivityPresenter
 
 class MainActivity : AppCompatActivity(), MainActivityPresenter.MainView {
@@ -18,13 +16,14 @@ class MainActivity : AppCompatActivity(), MainActivityPresenter.MainView {
 
         presenter = MainActivityPresenter(this)
 
-        main_unsplash_pick.setOnClickListener { presenter.pickApi(ApiKey.UNSPLASH_API_KEY) }
-        main_vk_pick.setOnClickListener { presenter.pickApi(ApiKey.VK_API_KEY) }
-    }
+        title = getString(presenter.headerTextId)
 
-    override fun startPreviewActivity(apiKey: ApiKey) {
-        val sendIntent = Intent(this, PreviewsActivity::class.java)
-            .apply { putExtra(API_KEY, apiKey) }
-        startActivity(sendIntent)
+        main_images.setHasFixedSize(true)
+        main_images.itemAnimator = null
+        main_images.layoutManager =
+            StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        main_images.adapter = presenter.imagesAdapter
+
+        presenter.loadImageList()
     }
 }

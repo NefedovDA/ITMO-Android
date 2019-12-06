@@ -13,7 +13,7 @@
 
         android:adjustViewBounds="true"
 
-        android:contentDescription="@string/photo_description"
+        android:contentDescription="@string/image_description"
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_launcher"
 

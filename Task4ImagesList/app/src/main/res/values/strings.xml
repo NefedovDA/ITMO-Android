@@ -3,7 +3,7 @@
     <string name="image_not_found">Image not found</string>
     <string name="use_unsplash_api">Use Unsplash API</string>
     <string name="use_vk_api">Use VK API</string>
-    <string name="photo_description">Photo</string>
+    <string name="image_description">Photo</string>
     <string name="mock_header">Header</string>
     <string name="unsplash_header">Unsplash API</string>
     <string name="vk_header">VK API</string>
