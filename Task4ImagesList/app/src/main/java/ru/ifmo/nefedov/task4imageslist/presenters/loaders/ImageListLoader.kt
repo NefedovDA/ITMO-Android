@@ -3,8 +3,9 @@ package ru.ifmo.nefedov.task4imageslist.presenters.loaders
 import android.os.AsyncTask
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.ifmo.nefedov.task4imageslist.model.Image
-import ru.ifmo.nefedov.task4imageslist.model.UnsplashKeys
+import ru.ifmo.nefedov.task4imageslist.presenters.targets.Image
+import ru.ifmo.nefedov.task4imageslist.presenters.targets.constructImage
+import ru.ifmo.nefedov.task4imageslist.presenters.utils.UnsplashKeys
 import ru.ifmo.nefedov.task4imageslist.views.items.ImagesAdapter
 import java.net.URL
 
@@ -20,13 +21,12 @@ class ImageListLoader(private val imagesAdapter: ImagesAdapter) :
 
     private fun parseJsonImage(jsonImage: JSONObject): Image {
         val jsonUrls = jsonImage.getJSONObject("urls")
-        return Image(
+        return constructImage(
             id = jsonImage.getString("id"),
+            big = jsonUrls.getString("thumb"),
+            small = jsonUrls.getString("small"),
             description = jsonImage.getString("description").nullIfNull(),
-            author = null,//jsonImage.getString("author").nullIfNull(),
-            regularUrl = jsonUrls.getString("regular"),
-            smallUrl = jsonUrls.getString("small"),
-            thumbUrl = jsonUrls.getString("thumb")
+            author = null//jsonImage.getString("author").nullIfNull(),
         )
     }
 
@@ -43,7 +43,7 @@ class ImageListLoader(private val imagesAdapter: ImagesAdapter) :
 
     override fun onPostExecute(result: List<Image>?) {
         if (result != null) {
-            imagesAdapter.setImages(result)
+            // TODO imagesAdapter.setImages(result)
         }
     }
 

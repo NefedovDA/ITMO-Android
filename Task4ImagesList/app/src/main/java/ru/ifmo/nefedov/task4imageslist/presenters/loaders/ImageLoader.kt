@@ -3,7 +3,7 @@ package ru.ifmo.nefedov.task4imageslist.presenters.loaders
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
-import ru.ifmo.nefedov.task4imageslist.model.Image
+import ru.ifmo.nefedov.task4imageslist.presenters.targets.Image
 import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 

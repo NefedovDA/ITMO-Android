@@ -2,7 +2,6 @@ package ru.ifmo.nefedov.task4imageslist.presenters
 
 import android.os.AsyncTask
 import ru.ifmo.nefedov.task4imageslist.R
-import ru.ifmo.nefedov.task4imageslist.model.Image
 import ru.ifmo.nefedov.task4imageslist.presenters.loaders.ImageListLoader
 import ru.ifmo.nefedov.task4imageslist.views.items.ImagesAdapter
 

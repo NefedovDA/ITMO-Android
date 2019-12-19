@@ -7,10 +7,9 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_preview.view.*
 import ru.ifmo.nefedov.task4imageslist.R
-import ru.ifmo.nefedov.task4imageslist.model.Image
 
 class ImagesAdapter : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
-    private var images: List<Image> = listOf()
+    private var images: List<ImageForView> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagesViewHolder {
         val holder = ImagesViewHolder(
@@ -32,7 +31,7 @@ class ImagesAdapter : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
         //holder.imageView.setImageBitmap(images[position].bitmap)
     }
 
-    fun setImages(images: List<Image>) {
+    fun setImages(images: List<ImageForView>) {
         this.images = images
         notifyDataSetChanged()
     }
