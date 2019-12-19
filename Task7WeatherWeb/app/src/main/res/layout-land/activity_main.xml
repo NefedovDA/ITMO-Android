@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".web.MainActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/main_topSeparator"
@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
 
-        android:orientation="horizontal"
+        android:orientation="vertical"
 
         app:layout_constraintGuide_percent="@dimen/main_middleSeparator_indent"
 
@@ -57,38 +57,40 @@
     <fragment
         android:id="@+id/main_today"
 
-        android:name="ru.ifmo.nefedov.task7.weather.web.fragments.TodayFragment"
+        android:name="ru.ifmo.nefedov.task2weatherview.fragments.TodayFragment"
 
         android:layout_width="0dp"
         android:layout_height="0dp"
 
-        app:layout_constraintBottom_toTopOf="@id/main_middleSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/main_middleSeparator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/main_topSeparator"
 
         />
 
     <View
-        style="@style/Divider.Horizontal"
+        style="@style/Divider.Vertical"
 
-        app:layout_constraintBottom_toTopOf="@id/main_middleSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_topSeparator"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/main_middleSeparator"
 
         />
 
     <fragment
         android:id="@+id/main_week"
 
-        android:name="ru.ifmo.nefedov.task7.weather.web.fragments.WeekFragment"
+        android:name="ru.ifmo.nefedov.task2weatherview.fragments.WeekFragment"
 
         android:layout_width="0dp"
         android:layout_height="0dp"
 
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/main_middleSeparator"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/main_middleSeparator" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_topSeparator"
+
+         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
