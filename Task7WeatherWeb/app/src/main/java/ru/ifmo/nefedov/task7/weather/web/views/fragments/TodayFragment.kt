@@ -1,4 +1,4 @@
-package ru.ifmo.nefedov.task7.weather.web.fragments
+package ru.ifmo.nefedov.task7.weather.web.views.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

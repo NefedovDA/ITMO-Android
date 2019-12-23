@@ -1,16 +1,21 @@
-package ru.ifmo.nefedov.task7.weather.web.items.day
+package ru.ifmo.nefedov.task7.weather.web.views.adapters
 
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.week_day.view.*
 import ru.ifmo.nefedov.task7.weather.web.R
+import ru.ifmo.nefedov.task7.weather.web.presenters.items.Day
 
 class DayAdapter(
     private val context: Context,
     private val days: List<Day>
-) : RecyclerView.Adapter<DayViewHolder>() {
+) : RecyclerView.Adapter<DayAdapter.DayViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayViewHolder =
         DayViewHolder(
             LayoutInflater.from(parent.context).inflate(
@@ -36,6 +41,11 @@ class DayAdapter(
         holder.tempText.text = context.getString(R.string.template_tempC, 12)
     }
 
+    class DayViewHolder(root: View): RecyclerView.ViewHolder(root) {
+        val descriptionText: TextView = root.day_description
+        val image: ImageView = root.day_image
+        val tempText: TextView = root.day_temp
+    }
 
     companion object {
         private val DESCRIPTION_FORMATTER = SimpleDateFormat("EEE, dd MMM")

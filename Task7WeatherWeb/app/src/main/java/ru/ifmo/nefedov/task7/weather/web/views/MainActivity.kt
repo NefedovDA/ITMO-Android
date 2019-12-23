@@ -1,4 +1,4 @@
-package ru.ifmo.nefedov.task7.weather.web
+package ru.ifmo.nefedov.task7.weather.web.views
 
 import android.os.Bundle
 import android.widget.CompoundButton
@@ -8,8 +8,15 @@ import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_header.view.*
+import ru.ifmo.nefedov.task7.weather.web.R
+import ru.ifmo.nefedov.task7.weather.web.presenters.MainActivityPresenter
 
-class MainActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeListener {
+class MainActivity :
+    AppCompatActivity(),
+    CompoundButton.OnCheckedChangeListener,
+    MainActivityPresenter.MainView {
+
+    private val myPresenter = MainActivityPresenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

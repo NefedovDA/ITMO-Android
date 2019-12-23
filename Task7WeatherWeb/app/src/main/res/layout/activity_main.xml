@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".views.MainActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/main_topSeparator"
@@ -57,7 +57,7 @@
     <fragment
         android:id="@+id/main_today"
 
-        android:name="ru.ifmo.nefedov.task7.weather.web.fragments.TodayFragment"
+        android:name="ru.ifmo.nefedov.task7.weather.web.views.fragments.TodayFragment"
 
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -81,7 +81,7 @@
     <fragment
         android:id="@+id/main_week"
 
-        android:name="ru.ifmo.nefedov.task7.weather.web.fragments.WeekFragment"
+        android:name="ru.ifmo.nefedov.task7.weather.web.views.fragments.WeekFragment"
 
         android:layout_width="0dp"
         android:layout_height="0dp"
