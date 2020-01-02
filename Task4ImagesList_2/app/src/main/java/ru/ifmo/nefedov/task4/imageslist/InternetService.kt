@@ -32,6 +32,10 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
         TODO()
     }
 
+    private fun downloadInfoList(): List<Any> {
+        TODO()
+    }
+
     private fun downloadFullscreen(url: String) {
         // TODO
     }
@@ -42,6 +46,7 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
 
     companion object {
         private const val LOG_KEY = "InternetService"
+
 
         private const val DOWNLOAD_MODE_KEY = "download_mode"
         private const val DOWNLOAD_PREVIEW_LIST = "download_list"
@@ -62,6 +67,14 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
         fun downloadFullscreen(context: Context, url: String) =
             runDownloading(context, DOWNLOAD_FULLSCREEN, url)
 
+
         const val RESULT_KEY = "result_value"
+
+
+        private var pageNumber = 1
+        private const val PER_PAGE = 10
+        private const val BASE_API_URL: String = "https://api.unsplash.com/"
+        private val API_URL: String =
+            "${BASE_API_URL}photos/?page=${pageNumber}&per_page=${PER_PAGE}&client_id=${BuildConfig.API_KEY}"
     }
 }
