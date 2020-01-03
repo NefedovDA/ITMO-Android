@@ -3,5 +3,5 @@
 
     <string name="no_internet_connection">Problems with internet connection!</string>
     <string name="image_description">Fullscreen Image</string>
-    <string name="mock_description">Description</string>
+    <string name="mock_description">Empty description.</string>
 </resources>
