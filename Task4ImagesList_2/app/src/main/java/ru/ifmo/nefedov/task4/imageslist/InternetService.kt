@@ -4,9 +4,20 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import org.json.JSONArray
+import ru.ifmo.nefedov.task4.imageslist.data.ImageInfo
+import ru.ifmo.nefedov.task4.imageslist.data.SmallImage
+import java.net.URL
 
 class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.InternetService") {
+
+    private val apiUrl: String
+        get() = "${BASE_API_URL}photos/?page=${pageNumber}&per_page=${PER_PAGE}&client_id=${BuildConfig.API_KEY}"
+
+
     override fun onHandleIntent(intent: Intent?) {
         if (intent == null) {
             Log.e(LOG_KEY, "Intent is null")
@@ -29,19 +40,50 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
     }
 
     private fun downloadSingleImage(url: String): Bitmap {
-        TODO()
+        val imageBytes = URL(url).openStream().readBytes()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
-    private fun downloadInfoList(): List<Any> {
-        TODO()
+    private fun downloadInfoList(): List<ImageInfo> {
+        val result = URL(apiUrl)
+            .openConnection()
+            .getInputStream()
+            .reader()
+            .readText()
+        leafPage()
+
+        val jsonResult = JSONArray(result)
+        return List(jsonResult.length()) {
+            val jsonImage = jsonResult.getJSONObject(it)
+            val jsonUrls = jsonImage.getJSONObject("urls")
+            ImageInfo(
+                bigUrl = jsonUrls.getString("thumb"),
+                smallUrl = jsonUrls.getString("small"),
+                description = jsonImage.getString("description").nullIfNull()
+            )
+        }
     }
+
+    private fun String.nullIfNull(): String? = if (this == "null") null else this
 
     private fun downloadFullscreen(url: String) {
-        // TODO
+        val bitmap = downloadSingleImage(url)
+        val intent = Intent().apply {
+            putExtra(RESULT_KEY, bitmap)
+        }
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 
     private fun downloadPreviewList() {
-        // TODO
+        val imageInfoList = downloadInfoList()
+        val smallImageList = imageInfoList.map { info ->
+            val bitmap = downloadSingleImage(info.smallUrl)
+            SmallImage(info, bitmap)
+        }
+        val intent = Intent().apply {
+            putExtra(RESULT_KEY, ArrayList(smallImageList))
+        }
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 
     companion object {
@@ -71,10 +113,12 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
         const val RESULT_KEY = "result_value"
 
 
+        private const val MAX_PAGE_NUMBER = 100
         private var pageNumber = 1
         private const val PER_PAGE = 10
         private const val BASE_API_URL: String = "https://api.unsplash.com/"
-        private val API_URL: String =
-            "${BASE_API_URL}photos/?page=${pageNumber}&per_page=${PER_PAGE}&client_id=${BuildConfig.API_KEY}"
+
+        private fun leafPage(): Unit =
+            if (pageNumber == MAX_PAGE_NUMBER) pageNumber = 1 else pageNumber += 1
     }
 }
