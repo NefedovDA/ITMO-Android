@@ -29,6 +29,13 @@ class SmallImage(
         description = imageInfo.description,
         bitmap = bitmap
     )
+
+    fun getImageInfo(): ImageInfo =
+        ImageInfo(
+            smallUrl = url,
+            bigUrl = bigVersionUrl,
+            description = description
+        )
 }
 
 @Parcelize

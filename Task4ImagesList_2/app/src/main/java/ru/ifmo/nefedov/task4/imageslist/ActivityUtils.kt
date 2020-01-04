@@ -14,3 +14,8 @@ fun Context.showOkDialog(message: String) {
     val alert = builder.create()
     alert.show()
 }
+
+enum class State {
+    NORMAL,
+    FAIL
+}

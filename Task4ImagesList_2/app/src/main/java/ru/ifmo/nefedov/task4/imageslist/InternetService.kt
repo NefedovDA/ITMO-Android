@@ -19,21 +19,22 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
 
 
     override fun onHandleIntent(intent: Intent?) {
+        Log.i(LOG_KEY, "onHandleIntent..")
         if (intent == null) {
             Log.e(LOG_KEY, "Intent is null")
             return
         }
 
-        val mode = intent.getStringExtra(DOWNLOAD_MODE_KEY)
+        val mode = intent.action
         when (mode) {
-            DOWNLOAD_PREVIEW_LIST -> downloadPreviewList()
+            DOWNLOAD_PREVIEW_LIST -> downloadPreviewList(intent)
             DOWNLOAD_FULLSCREEN -> {
                 val url = intent.getStringExtra(DOWNLOAD_EXTRA_KEY)
                 if (url == null) {
                     Log.e(LOG_KEY, "Url fo downloading fullscreen is null")
                     return
                 }
-                downloadFullscreen(url)
+                downloadFullscreen(intent, url)
             }
             else -> Log.e(LOG_KEY, "Mode is null or has undefined value")
         }
@@ -66,39 +67,44 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
 
     private fun String.nullIfNull(): String? = if (this == "null") null else this
 
-    private fun downloadFullscreen(url: String) {
-        val bitmap = downloadSingleImage(url)
-        val intent = Intent().apply {
-            putExtra(RESULT_KEY, bitmap)
-        }
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+    private fun Intent.sendResult(filler: Intent.() -> Unit) {
+        filler()
+        Log.i(LOG_KEY, "sendBroadcast..")
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(this)
     }
 
-    private fun downloadPreviewList() {
+    private fun downloadFullscreen(intent: Intent, url: String) {
+        val bitmap = downloadSingleImage(url)
+        intent.sendResult {
+            putExtra(RESULT_KEY, bitmap)
+        }
+    }
+
+    private fun downloadPreviewList(intent: Intent) {
+        Log.i(LOG_KEY, "downloadingPreviewList..")
         val imageInfoList = downloadInfoList()
         val smallImageList = imageInfoList.map { info ->
             val bitmap = downloadSingleImage(info.smallUrl)
             SmallImage(info, bitmap)
         }
-        val intent = Intent().apply {
+        intent.sendResult {
             putExtra(RESULT_KEY, ArrayList(smallImageList))
         }
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 
     companion object {
         private const val LOG_KEY = "InternetService"
 
 
-        private const val DOWNLOAD_MODE_KEY = "download_mode"
-        private const val DOWNLOAD_PREVIEW_LIST = "download_list"
-        private const val DOWNLOAD_FULLSCREEN = "download_fullscreen"
+        const val DOWNLOAD_PREVIEW_LIST = "download_list"
+        const val DOWNLOAD_FULLSCREEN = "download_fullscreen"
 
         private const val DOWNLOAD_EXTRA_KEY = "download_extra"
 
-        private fun runDownloading(context: Context, mode: String, extra: String? = null) {
+        private fun runDownloading(context: Context, mod: String, extra: String? = null) {
+            Log.i(LOG_KEY, "runDownloading..")
             val intent = Intent(context, InternetService::class.java).apply {
-                putExtra(DOWNLOAD_MODE_KEY, mode)
+                action = mod
                 extra?.let { putExtra(DOWNLOAD_EXTRA_KEY, it) }
             }
 
