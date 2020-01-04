@@ -77,11 +77,11 @@ class FullscreenActivity : AppCompatActivity() {
                 return
             }
 
-            fullscreen_progress.visibility = View.INVISIBLE
-            fullscreen_image_group.visibility = View.VISIBLE
-
             fullscreen_image.setImageBitmap(bitmap)
             imageInfo.description?.let { fullscreen_description.text = it }
+
+            fullscreen_progress.visibility = View.INVISIBLE
+            fullscreen_image_group.visibility = View.VISIBLE
         }
     }
 

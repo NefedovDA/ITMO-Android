@@ -14,6 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
+        android:background="@color/colorPrimary"
+
+        android:padding="4dp"
+
         android:orientation="horizontal">
 
         <ImageView
@@ -21,7 +25,7 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".40"
+            android:layout_weight=".39"
 
             android:contentDescription="@string/image_description"
 
@@ -31,12 +35,20 @@
 
             />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+
+            android:layout_weight="0.02"
+
+            />
+
         <TextView
             android:id="@+id/item_description"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".60"
+            android:layout_weight=".59"
 
             android:text="@string/empty_description"
 
