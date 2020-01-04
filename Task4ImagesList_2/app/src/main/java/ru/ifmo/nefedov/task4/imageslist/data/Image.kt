@@ -10,11 +10,12 @@ interface Image : Parcelable {
     val bitmap: Bitmap
 }
 
+@Parcelize
 data class ImageInfo(
     val smallUrl: String,
     val bigUrl: String,
     val description: String?
-)
+) : Parcelable
 
 @Parcelize
 class SmallImage(

@@ -7,13 +7,13 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.ifmo.nefedov.task4.imageslist.data.SmallImage
 import ru.ifmo.nefedov.task4.imageslist.imageListView.ImageAdapter
+import ru.ifmo.nefedov.task4.imageslist.services.InternetService
 
 class MainActivity : AppCompatActivity() {
     private lateinit var receiver: BroadcastReceiver
@@ -47,6 +47,11 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
     }
 
+    override fun onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+        super.onStop()
+    }
+
     private fun startDownloadingImagePreviewList() {
         Log.i(LOG_KEY, "startDownloadingImagePreviewList..")
         main_progress.visibility = View.VISIBLE
@@ -56,15 +61,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openFullscreen(image: SmallImage) {
-        // TODO
-
-        Toast
-            .makeText(
-                this@MainActivity,
-                "Image that image is opened!",
-                Toast.LENGTH_SHORT
-            ).show()
-
+        val intent = Intent(this@MainActivity, FullscreenActivity::class.java).apply {
+            putExtra(FullscreenActivity.IMAGE_INFO_KEY, image.getImageInfo())
+        }
+        startActivity(intent)
     }
 
     private inner class MainReceiver : BroadcastReceiver() {

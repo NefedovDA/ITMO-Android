@@ -3,11 +3,11 @@ package ru.ifmo.nefedov.task4.imageslist
 import android.app.AlertDialog
 import android.content.Context
 
-fun Context.showOkDialog(message: String) {
+fun Context.showOkDialog(title_id: Int, message_id: Int) {
     val builder = AlertDialog.Builder(this)
         .apply {
-            setTitle(R.string.no_internet_connection)
-            setMessage(message)
+            setTitle(title_id)
+            setMessage(message_id)
             setCancelable(false)
             setNegativeButton("OK") { dialog, _ -> dialog.cancel() }
         }

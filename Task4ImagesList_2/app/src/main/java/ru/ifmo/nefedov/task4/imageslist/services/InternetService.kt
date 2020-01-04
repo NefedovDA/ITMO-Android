@@ -1,4 +1,4 @@
-package ru.ifmo.nefedov.task4.imageslist
+package ru.ifmo.nefedov.task4.imageslist.services
 
 import android.app.IntentService
 import android.content.Context
@@ -8,14 +8,15 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.json.JSONArray
+import ru.ifmo.nefedov.task4.imageslist.BuildConfig
 import ru.ifmo.nefedov.task4.imageslist.data.ImageInfo
 import ru.ifmo.nefedov.task4.imageslist.data.SmallImage
 import java.net.URL
 
-class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.InternetService") {
+class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services.InternetService") {
 
     private val apiUrl: String
-        get() = "${BASE_API_URL}photos/?page=${pageNumber}&per_page=${PER_PAGE}&client_id=${BuildConfig.API_KEY}"
+        get() = "${BASE_API_URL}photos/?page=$pageNumber&per_page=$PER_PAGE&client_id=${BuildConfig.API_KEY}"
 
 
     override fun onHandleIntent(intent: Intent?) {
@@ -58,8 +59,8 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
             val jsonImage = jsonResult.getJSONObject(it)
             val jsonUrls = jsonImage.getJSONObject("urls")
             ImageInfo(
-                bigUrl = jsonUrls.getString("thumb"),
-                smallUrl = jsonUrls.getString("small"),
+                bigUrl = jsonUrls.getString("regular"),
+                smallUrl = jsonUrls.getString("thumb"),
                 description = jsonImage.getString("description").nullIfNull()
             )
         }
@@ -112,6 +113,7 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.Internet
         }
 
         fun downloadPreviewList(context: Context) = runDownloading(context, DOWNLOAD_PREVIEW_LIST)
+
         fun downloadFullscreen(context: Context, url: String) =
             runDownloading(context, DOWNLOAD_FULLSCREEN, url)
 
