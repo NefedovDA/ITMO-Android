@@ -35,9 +35,9 @@ class FullscreenActivity : AppCompatActivity() {
             showOkDialog(
                 R.string.logic_error_title,
                 R.string.no_intent_field_error_text
-            )
-
-            finish()
+            ) {
+                finish()
+            }
             return
         }
 
