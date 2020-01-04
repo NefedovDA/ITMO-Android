@@ -17,6 +17,8 @@ import ru.ifmo.nefedov.task4.imageslist.data.ImageInfo
 import ru.ifmo.nefedov.task4.imageslist.data.SmallImage
 import ru.ifmo.nefedov.task4.imageslist.imageListView.ImageAdapter
 import ru.ifmo.nefedov.task4.imageslist.services.InternetService
+import java.io.IOException
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
@@ -136,6 +138,15 @@ class MainActivity : AppCompatActivity() {
             Log.i(LOG_KEY, "onReceive..")
             if (intent == null) {
                 Log.e(LOG_KEY, "Intent is null")
+                return
+            }
+
+            if (intent.getSerializableExtra(InternetService.FAIL_KEY) != null) {
+                setOnFail()
+                showOkDialog(
+                    R.string.no_internet_connection_title,
+                    R.string.no_internet_connection_text
+                )
                 return
             }
 

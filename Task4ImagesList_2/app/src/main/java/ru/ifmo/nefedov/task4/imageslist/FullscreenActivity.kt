@@ -121,6 +121,17 @@ class FullscreenActivity : AppCompatActivity() {
                 return
             }
 
+            if (intent.getSerializableExtra(InternetService.FAIL_KEY) != null) {
+                setOnFail()
+                showOkDialog(
+                    R.string.no_internet_connection_title,
+                    R.string.no_internet_connection_text
+                ) {
+                    finish()
+                }
+                return
+            }
+
             val bitmap: Bitmap? =
                 intent.getParcelableExtra(InternetService.RESULT_KEY)
 

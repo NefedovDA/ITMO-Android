@@ -12,6 +12,7 @@ import ru.ifmo.nefedov.task4.imageslist.BuildConfig
 import ru.ifmo.nefedov.task4.imageslist.cache.Cache
 import ru.ifmo.nefedov.task4.imageslist.data.ImageInfo
 import ru.ifmo.nefedov.task4.imageslist.data.SmallImage
+import java.io.IOException
 import java.net.URL
 
 class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services.InternetService") {
@@ -77,21 +78,32 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services
     }
 
     private fun downloadFullscreen(intent: Intent, url: String) {
-        val bitmap = downloadSingleImage(url)
-        intent.sendResult {
-            putExtra(RESULT_KEY, bitmap)
+        try {
+            val bitmap = downloadSingleImage(url)
+            intent.sendResult {
+                putExtra(RESULT_KEY, bitmap)
+            }
+        } catch (e: IOException) {
+            intent.sendResult {
+                putExtra(FAIL_KEY, e)
+            }
         }
     }
 
     private fun downloadPreviewList(intent: Intent) {
-        Log.i(LOG_KEY, "downloadingPreviewList..")
-        val imageInfoList = downloadInfoList()
-        val smallImageList = imageInfoList.map { info ->
-            val bitmap = downloadSingleImage(info.smallUrl)
-            SmallImage(info, bitmap)
-        }
-        intent.sendResult {
-            putExtra(RESULT_KEY, ArrayList(smallImageList))
+        try {
+            val imageInfoList = downloadInfoList()
+            val smallImageList = imageInfoList.map { info ->
+                val bitmap = downloadSingleImage(info.smallUrl)
+                SmallImage(info, bitmap)
+            }
+            intent.sendResult {
+                putExtra(RESULT_KEY, ArrayList(smallImageList))
+            }
+        } catch (e: IOException) {
+            intent.sendResult {
+                putExtra(FAIL_KEY, e)
+            }
         }
     }
 
@@ -121,6 +133,7 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services
 
 
         const val RESULT_KEY = "result_value"
+        const val FAIL_KEY = "fail_value"
 
 
         private const val MAX_PAGE_NUMBER = 100
