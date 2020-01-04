@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.json.JSONArray
 import ru.ifmo.nefedov.task4.imageslist.BuildConfig
+import ru.ifmo.nefedov.task4.imageslist.cache.Cache
 import ru.ifmo.nefedov.task4.imageslist.data.ImageInfo
 import ru.ifmo.nefedov.task4.imageslist.data.SmallImage
 import java.net.URL
@@ -41,10 +42,11 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services
         }
     }
 
-    private fun downloadSingleImage(url: String): Bitmap {
-        val imageBytes = URL(url).openStream().readBytes()
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-    }
+    private fun downloadSingleImage(url: String): Bitmap =
+        Cache.simpleCathe.getOrPut(url) {
+            val imageBytes = URL(url).openStream().readBytes()
+            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        }
 
     private fun downloadInfoList(): List<ImageInfo> {
         val result = URL(apiUrl)
