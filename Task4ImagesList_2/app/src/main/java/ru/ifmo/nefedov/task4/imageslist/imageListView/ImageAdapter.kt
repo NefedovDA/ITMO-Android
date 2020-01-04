@@ -12,6 +12,10 @@ class ImageAdapter(
 
     private var images: List<SmallImage> = listOf()
 
+    fun getImages(): List<SmallImage> {
+        return images
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val holder = ImageViewHolder(
             LayoutInflater.from(parent.context).inflate(

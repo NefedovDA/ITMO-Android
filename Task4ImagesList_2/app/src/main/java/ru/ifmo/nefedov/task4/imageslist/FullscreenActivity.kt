@@ -11,6 +11,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.android.synthetic.main.activity_fullscreen.*
+import ru.ifmo.nefedov.task4.imageslist.cache.Cache
 import ru.ifmo.nefedov.task4.imageslist.data.ImageInfo
 import ru.ifmo.nefedov.task4.imageslist.services.InternetService
 
@@ -20,6 +21,27 @@ class FullscreenActivity : AppCompatActivity() {
     private lateinit var imageInfo: ImageInfo
 
     private var state = State.WAIT
+
+    private fun setOnWait() {
+        state = State.WAIT
+
+        fullscreen_progress.visibility = View.VISIBLE
+        fullscreen_image_group.visibility = View.INVISIBLE
+    }
+
+    private fun setOnShow() {
+        state = State.SHOW
+
+        fullscreen_progress.visibility = View.INVISIBLE
+        fullscreen_image_group.visibility = View.VISIBLE
+    }
+
+    private fun setOnFail() {
+        state = State.FAIL
+
+        fullscreen_progress.visibility = View.INVISIBLE
+        fullscreen_image_group.visibility = View.INVISIBLE
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(LOG_KEY, "onCreate..")
@@ -44,14 +66,21 @@ class FullscreenActivity : AppCompatActivity() {
 
         this.imageInfo = imageInfo
 
-        if (state == State.WAIT) {
+        if (state != State.SHOW) {
             runDownloadingFullscreenImage()
+        } else {
+            val bitmap: Bitmap? = Cache.simpleCathe[imageInfo.bigUrl]
+            if (bitmap == null) {
+                Log.e(LOG_KEY, "Saved state is SHOW, but image not in cache")
+                runDownloadingFullscreenImage()
+                return
+            }
+            fillViewContent(bitmap)
         }
     }
 
     private fun runDownloadingFullscreenImage() {
-        fullscreen_progress.visibility = View.VISIBLE
-        fullscreen_image_group.visibility = View.INVISIBLE
+        setOnWait()
         InternetService.downloadFullscreen(this@FullscreenActivity, imageInfo.bigUrl)
     }
 
@@ -100,20 +129,20 @@ class FullscreenActivity : AppCompatActivity() {
                 return
             }
 
-            state = State.SHOW
-
-            fullscreen_image.setImageBitmap(bitmap)
-            imageInfo.description?.let { fullscreen_description.text = it }
-
-            fullscreen_progress.visibility = View.INVISIBLE
-            fullscreen_image_group.visibility = View.VISIBLE
+            fillViewContent(bitmap)
         }
+    }
+
+    private fun fillViewContent(bitmap: Bitmap) {
+        setOnShow()
+        fullscreen_image.setImageBitmap(bitmap)
+        imageInfo.description?.let { fullscreen_description.text = it }
     }
 
     companion object {
         private const val LOG_KEY = "FullscreenActivity"
 
-        private const val STATE_KEY = "State"
+        private const val STATE_KEY = "FullscreenActivity_State"
 
         const val IMAGE_INFO_KEY = "ImageInfo"
     }
