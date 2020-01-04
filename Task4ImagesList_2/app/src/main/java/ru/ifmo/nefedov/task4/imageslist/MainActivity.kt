@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         startDownloadingImagePreviewList()
     }
 
-    override fun onStart() {
+    override fun onResume() {
         Log.i(LOG_KEY, "onStart..")
         receiver = MainReceiver()
 
@@ -44,12 +44,12 @@ class MainActivity : AppCompatActivity() {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
 
-        super.onStart()
+        super.onResume()
     }
 
-    override fun onStop() {
+    override fun onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
-        super.onStop()
+        super.onPause()
     }
 
     private fun startDownloadingImagePreviewList() {

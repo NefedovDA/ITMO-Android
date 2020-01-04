@@ -2,6 +2,8 @@ package ru.ifmo.nefedov.task4.imageslist
 
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
 fun Context.showOkDialog(title_id: Int, message_id: Int, onClickOkExtra: () -> Unit = {}) {
     val builder = AlertDialog.Builder(this)
@@ -18,7 +20,9 @@ fun Context.showOkDialog(title_id: Int, message_id: Int, onClickOkExtra: () -> U
     alert.show()
 }
 
-enum class State {
-    NORMAL,
+@Parcelize
+enum class State : Parcelable {
+    WAIT,
+    SHOW,
     FAIL
 }

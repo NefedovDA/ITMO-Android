@@ -19,15 +19,16 @@ class FullscreenActivity : AppCompatActivity() {
     private lateinit var receiver: BroadcastReceiver
     private lateinit var imageInfo: ImageInfo
 
+    private var state = State.WAIT
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(LOG_KEY, "onCreate..")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fullscreen)
 
-        fullscreen_progress.visibility = View.VISIBLE
-        fullscreen_image_group.visibility = View.INVISIBLE
+        savedInstanceState?.getParcelable<State>(STATE_KEY)?.let { state = it }
 
-        val imageInfo: ImageInfo? = intent.getParcelableExtra(IMAGE_INFO_KEY)
+        val imageInfo: ImageInfo? = intent?.getParcelableExtra(IMAGE_INFO_KEY)
 
         if (imageInfo == null) {
             Log.e(LOG_KEY, "Start activity without small image")
@@ -42,10 +43,19 @@ class FullscreenActivity : AppCompatActivity() {
         }
 
         this.imageInfo = imageInfo
+
+        if (state == State.WAIT) {
+            runDownloadingFullscreenImage()
+        }
+    }
+
+    private fun runDownloadingFullscreenImage() {
+        fullscreen_progress.visibility = View.VISIBLE
+        fullscreen_image_group.visibility = View.INVISIBLE
         InternetService.downloadFullscreen(this@FullscreenActivity, imageInfo.bigUrl)
     }
 
-    override fun onStart() {
+    override fun onResume() {
         receiver = FullscreenReceiver()
 
         val intentFilter = IntentFilter().apply {
@@ -54,16 +64,29 @@ class FullscreenActivity : AppCompatActivity() {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
 
-        super.onStart()
+        super.onResume()
+
+        if (state == State.WAIT) {
+            runDownloadingFullscreenImage()
+        }
     }
 
-    override fun onStop() {
+    override fun onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
-        super.onStop()
+        super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(STATE_KEY, state)
     }
 
     private inner class FullscreenReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            if (state != State.WAIT) {
+                return
+            }
+
             if (intent == null) {
                 Log.e(LOG_KEY, "Intent is null")
                 return
@@ -77,6 +100,8 @@ class FullscreenActivity : AppCompatActivity() {
                 return
             }
 
+            state = State.SHOW
+
             fullscreen_image.setImageBitmap(bitmap)
             imageInfo.description?.let { fullscreen_description.text = it }
 
@@ -87,6 +112,8 @@ class FullscreenActivity : AppCompatActivity() {
 
     companion object {
         private const val LOG_KEY = "FullscreenActivity"
+
+        private const val STATE_KEY = "State"
 
         const val IMAGE_INFO_KEY = "ImageInfo"
     }
