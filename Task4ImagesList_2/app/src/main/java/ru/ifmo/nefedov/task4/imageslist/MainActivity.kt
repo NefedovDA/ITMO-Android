@@ -31,13 +31,15 @@ class MainActivity : AppCompatActivity() {
         state = State.WAIT
 
         main_progress.visibility = View.VISIBLE
-        main_imagePreviewList.visibility = View.INVISIBLE
+        main_refresh.visibility = View.INVISIBLE
+        main_imagePreviewList.visibility = View.VISIBLE
     }
 
     private fun setOnShow() {
         state = State.SHOW
 
         main_progress.visibility = View.INVISIBLE
+        main_refresh.visibility = View.VISIBLE
         main_imagePreviewList.visibility = View.VISIBLE
     }
 
@@ -45,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         state = State.FAIL
 
         main_progress.visibility = View.INVISIBLE
+        main_refresh.visibility = View.VISIBLE
         main_imagePreviewList.visibility = View.INVISIBLE
     }
 
@@ -54,6 +57,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         savedInstanceState?.getParcelable<State>(STATE_KEY)?.let { state = it }
+
+        main_refresh.setOnRefreshListener(::onRefresh)
 
         val viewManager = LinearLayoutManager(this)
         adapter = ImageAdapter(::openFullscreen)
@@ -88,6 +93,13 @@ class MainActivity : AppCompatActivity() {
 
             adapter.setImages(images)
         }
+    }
+
+    private fun onRefresh() {
+        if (state != State.WAIT) {
+            startDownloadingImagePreviewList()
+        }
+        main_refresh.isRefreshing = false
     }
 
     override fun onResume() {
