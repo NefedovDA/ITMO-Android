@@ -12,18 +12,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if (savedInstanceState == null) {
+            selectTab(R.id.navigation_home)
+        } else {
+            currentFragmentTag = savedInstanceState.getString(CURRENT_FRAGMENT_TAG_KEY)
+        }
+
         main_bottom_navigation?.setOnNavigationItemSelectedListener {
-            selectTab("${it.itemId}")
+            selectTab(it.itemId)
             true
         }
 
         main_navigation?.setNavigationItemSelectedListener {
-            selectTab("${it.itemId}")
+            selectTab(it.itemId)
             true
         }
     }
 
-    private fun selectTab(fragmentTag: String) {
+    private fun selectTab(tabInd: Int) {
+        val fragmentTag = "$tabInd"
         val fragment = supportFragmentManager.findFragmentByTag(fragmentTag) ?: TabFragment()
 
         val transaction = supportFragmentManager.beginTransaction()
@@ -40,5 +47,15 @@ class MainActivity : AppCompatActivity() {
 
         currentFragmentTag = fragmentTag
         transaction.commit()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString(CURRENT_FRAGMENT_TAG_KEY, currentFragmentTag)
+    }
+
+    companion object {
+        private const val CURRENT_FRAGMENT_TAG_KEY: String = "MainActivity_CurrentFragmentTag"
     }
 }
