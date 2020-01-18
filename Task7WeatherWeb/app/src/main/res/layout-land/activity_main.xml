@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
 
-        android:orientation="horizontal"
+        android:orientation="vertical"
 
         app:layout_constraintGuide_percent="@dimen/main_middleSeparator_indent"
 
@@ -62,19 +62,19 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
 
-        app:layout_constraintBottom_toTopOf="@id/main_middleSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/main_middleSeparator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/main_topSeparator"
 
         />
 
     <View
-        style="@style/Divider.Horizontal"
+        style="@style/Divider.Vertical"
 
-        app:layout_constraintBottom_toTopOf="@id/main_middleSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_topSeparator"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/main_middleSeparator"
 
         />
 
@@ -86,9 +86,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
 
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/main_middleSeparator"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/main_middleSeparator" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_topSeparator"
+
+         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
