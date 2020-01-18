@@ -1,19 +1,21 @@
 package ru.ifmo.nefedov.task4.imageslist.services
 
-import android.app.IntentService
+import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.json.JSONArray
 import ru.ifmo.nefedov.task4.imageslist.BuildConfig
+import ru.ifmo.nefedov.task4.imageslist.MainActivity
 import ru.ifmo.nefedov.task4.imageslist.cache.Cache
 import ru.ifmo.nefedov.task4.imageslist.data.ImageInfo
-import ru.ifmo.nefedov.task4.imageslist.data.SmallImage
 import java.io.IOException
 import java.net.URL
+
 
 class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services.InternetService") {
 
@@ -23,6 +25,23 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services
 
     override fun onHandleIntent(intent: Intent?) {
         Log.i(LOG_KEY, "onHandleIntent..")
+
+        createNotificationChannel()
+        val notificationIntent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0, notificationIntent, 0
+        )
+        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Foreground Service")
+            .setContentText("Loading image")
+            .setContentIntent(pendingIntent)
+            .build()
+
+        startForeground(NOTIFICATION_ID, notification)
+
+        Thread.sleep(5000)
+
         if (intent == null) {
             Log.e(LOG_KEY, "Intent is null")
             return
@@ -43,11 +62,32 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services
         }
     }
 
-    private fun downloadSingleImage(url: String): Bitmap =
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                CHANNEL_ID,
+                "Foreground Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = getSystemService(
+                NotificationManager::class.java
+            )
+
+            if (manager == null) {
+                Log.e(LOG_KEY, "notification manager is null")
+                return
+            }
+
+            manager.createNotificationChannel(serviceChannel)
+        }
+    }
+
+    private fun downloadSingleImage(url: String) {
         Cache.simpleCathe.getOrPut(url) {
             val imageBytes = URL(url).openStream().readBytes()
             BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         }
+    }
 
     private fun downloadInfoList(): List<ImageInfo> {
         val result = URL(apiUrl)
@@ -75,13 +115,15 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services
         filler()
         Log.i(LOG_KEY, "sendBroadcast..")
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(this)
+
+        stopForeground(Service.STOP_FOREGROUND_REMOVE)
     }
 
     private fun downloadFullscreen(intent: Intent, url: String) {
         try {
-            val bitmap = downloadSingleImage(url)
+            downloadSingleImage(url)
             intent.sendResult {
-                putExtra(RESULT_KEY, bitmap)
+                putExtra(RESULT_KEY, url)
             }
         } catch (e: IOException) {
             intent.sendResult {
@@ -93,12 +135,9 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services
     private fun downloadPreviewList(intent: Intent) {
         try {
             val imageInfoList = downloadInfoList()
-            val smallImageList = imageInfoList.map { info ->
-                val bitmap = downloadSingleImage(info.smallUrl)
-                SmallImage(info, bitmap)
-            }
+            imageInfoList.forEach { downloadSingleImage(it.smallUrl) }
             intent.sendResult {
-                putExtra(RESULT_KEY, ArrayList(smallImageList))
+                putExtra(RESULT_KEY, ArrayList(imageInfoList))
             }
         } catch (e: IOException) {
             intent.sendResult {
@@ -109,6 +148,9 @@ class InternetService : IntentService("ru.ifmo.nefedov.task4.imageslist.services
 
     companion object {
         private const val LOG_KEY = "InternetService"
+
+        private const val CHANNEL_ID = "InternetService.Chanel"
+        private const val NOTIFICATION_ID = 1119191929
 
 
         const val DOWNLOAD_PREVIEW_LIST = "download_list"
