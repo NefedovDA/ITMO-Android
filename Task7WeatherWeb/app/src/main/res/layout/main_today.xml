@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+
+    tools:showIn="@layout/activity_main">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/today_topSeparator"
@@ -81,6 +83,8 @@
             android:layout_height="match_parent"
             android:layout_weight="0.50"
 
+            android:src="@mipmap/ic_launcher"
+
             tools:comment="Set in style"
             tools:ignore="ContentDescription" />
 
@@ -109,7 +113,7 @@
         <include
             android:id="@+id/today_wind"
 
-            layout="@layout/today_extra"
+            layout="@layout/main_today_extra"
 
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -122,7 +126,7 @@
         <include
             android:id="@+id/today_pressure"
 
-            layout="@layout/today_extra"
+            layout="@layout/main_today_extra"
 
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -135,7 +139,7 @@
         <include
             android:id="@+id/today_humidity"
 
-            layout="@layout/today_extra"
+            layout="@layout/main_today_extra"
 
             android:layout_width="0dp"
             android:layout_height="match_parent"

@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+
+    tools:showIn="@layout/activity_main">
 
 
     <TextView
@@ -27,6 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.50"
+
+        android:src="@mipmap/ic_launcher"
 
         tools:comment="Set in style"
         tools:ignore="ContentDescription" />

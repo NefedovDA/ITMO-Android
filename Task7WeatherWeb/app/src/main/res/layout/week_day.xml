@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/week_day_height"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:showIn="@layout/activity_main">
 
     <TextView
         android:id="@+id/day_description"
@@ -26,6 +27,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.35"
+
+        android:src="@mipmap/ic_launcher"
 
         tools:comment="Set in style"
         tools:ignore="ContentDescription" />

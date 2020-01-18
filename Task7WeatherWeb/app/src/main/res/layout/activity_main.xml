@@ -54,10 +54,10 @@
 
         />
 
-    <fragment
+    <include
         android:id="@+id/main_today"
 
-        android:name="ru.ifmo.nefedov.task7.weather.web.fragments.TodayFragment"
+        layout="@layout/main_today"
 
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -78,8 +78,8 @@
 
         />
 
-    <fragment
-        android:id="@+id/main_week"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/week_days"
 
         android:name="ru.ifmo.nefedov.task7.weather.web.fragments.WeekFragment"
 
@@ -89,6 +89,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/main_middleSeparator" />
+        app:layout_constraintTop_toBottomOf="@id/main_middleSeparator"
+
+        tools:listitem="@layout/week_day"
+
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
