@@ -6,44 +6,52 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
-
-    var currentFragmentTag: String? = null
+    private lateinit var tabState: LinkedList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null) {
+            tabState = LinkedList()
             selectTab(R.id.navigation_home)
         } else {
-            currentFragmentTag = savedInstanceState.getString(CURRENT_FRAGMENT_TAG_KEY)
-            val menuItem = (main_navigation?.menu ?: main_bottom_navigation?.menu)!!
-                .findItem(currentFragmentTag!!.toInt())
-            menuItem.isChecked = true
+            tabState = LinkedList(savedInstanceState.getStringArrayList(TAB_STATE_KEY)!!)
+            selectTab(tabState.first.toInt())
         }
 
-        main_bottom_navigation?.setOnNavigationItemSelectedListener(::selectItem)
         main_navigation?.setNavigationItemSelectedListener(::selectItem)
+        main_bottom_navigation?.setOnNavigationItemSelectedListener(::selectItem)
     }
 
     private fun selectItem(menuItem: MenuItem): Boolean {
         selectTab(menuItem.itemId)
-        main_navigation?.menu?.forEach { it.isChecked = false }
-        menuItem.isChecked = true
         return true
     }
 
-    private fun selectTab(tabInd: Int) = selectTab("$tabInd")
+    private fun selectTab(tabInd: Int) {
+        selectTabFragment("$tabInd")
+        main_navigation?.menu?.forEach { it.isChecked = false }
+        val menuItem = (main_navigation?.menu ?: main_bottom_navigation?.menu)!!.findItem(tabInd)
+        menuItem.isChecked = true
+    }
 
-    private fun selectTab(fragmentTag: String) {
+    private fun selectTabFragment(fragmentTag: String) {
         val fragment = supportFragmentManager.findFragmentByTag(fragmentTag) ?: TabFragment()
 
         val transaction = supportFragmentManager.beginTransaction()
 
-        supportFragmentManager.findFragmentByTag(currentFragmentTag)?.let {
-            transaction.hide(it)
+        supportFragmentManager.findFragmentByTag(tabState.firstOrNull())?.let {
+            if (it.childFragmentManager.backStackEntryCount == 0) {
+                tabState.removeFirst()
+                transaction.remove(it)
+            } else {
+                transaction.hide(it)
+            }
         }
 
         if (fragment.isAdded) {
@@ -52,11 +60,18 @@ class MainActivity : AppCompatActivity() {
             transaction.add(R.id.main_fragmentContainer, fragment, fragmentTag)
         }
 
-        currentFragmentTag = fragmentTag
+        tabState.apply {
+            remove(fragmentTag)
+            addFirst(fragmentTag)
+        }
         transaction.commit()
     }
 
     override fun onBackPressed() {
+        if (tabState.isEmpty()) {
+            finish()
+        }
+        val currentFragmentTag = tabState.first
         val fragment = supportFragmentManager.findFragmentByTag(currentFragmentTag)
         if (fragment == null) {
             Log.e(LOG_KEY, "No current fragment!")
@@ -67,7 +82,13 @@ class MainActivity : AppCompatActivity() {
 
         val manager = fragment.childFragmentManager
         if (manager.backStackEntryCount == 0) {
-            finish()
+            if (tabState.size <= 1) {
+                finish()
+            } else {
+                supportFragmentManager.beginTransaction().remove(fragment).commit()
+                tabState.removeFirst()
+                selectTab(tabState.first.toInt())
+            }
         } else {
             manager.popBackStack()
         }
@@ -75,12 +96,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(CURRENT_FRAGMENT_TAG_KEY, currentFragmentTag)
+        outState.putStringArrayList(TAB_STATE_KEY, ArrayList(tabState))
     }
 
     companion object {
-        private const val LOG_KEY: String = "MAinActivity"
+        private const val LOG_KEY: String = "MainActivity"
 
-        private const val CURRENT_FRAGMENT_TAG_KEY: String = "MainActivity_CurrentFragmentTag"
+        private const val TAB_STATE_KEY: String = "MainActivity_TabState"
     }
 }
