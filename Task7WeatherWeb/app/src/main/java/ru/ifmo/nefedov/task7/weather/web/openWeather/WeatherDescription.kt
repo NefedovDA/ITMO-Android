@@ -3,13 +3,17 @@ package ru.ifmo.nefedov.task7.weather.web.openWeather
 import com.squareup.moshi.Json
 import ru.ifmo.nefedov.task7.weather.web.R
 import java.util.*
+import kotlin.math.roundToInt
 
 
-data class TodayForecast(
+data class DayForecast(
+    @Json(name = "dt") private val dateL: Long,
     @Json(name = "weather") val icons: List<Icon>,
     @Json(name = "main") val main: WeatherMain,
     @Json(name = "wind") val wind: WeatherWind
-)
+) {
+    val date: Date get() = Date(dateL * 1000)
+}
 
 data class Icon(
     @Json(name = "id") private val id: Int,
@@ -33,7 +37,9 @@ data class WeatherMain(
     @Json(name = "temp") val temp: Float,
     @Json(name = "pressure") val pressure: Int,
     @Json(name = "humidity") val humidity: Int
-)
+) {
+    val roundTemp get() = (temp * 10).roundToInt().toFloat() / 10
+}
 
 data class WeatherWind(
     @Json(name = "speed") val speed: Float
@@ -41,17 +47,4 @@ data class WeatherWind(
 
 data class WeekForecast(
     @Json(name = "list") val forecasts: List<DayForecast>
-)
-
-data class DayForecast(
-    @Json(name = "dt") private val dateL: Long,
-    @Json(name = "temp") private val tempHandler: WeatherTemp,
-    @Json(name = "weather") val icons: List<Icon>
-) {
-    val date: Date get() = Date(dateL)
-    val temp: Float get() = tempHandler.temp
-}
-
-data class WeatherTemp(
-    @Json(name = "day") val temp: Float
 )

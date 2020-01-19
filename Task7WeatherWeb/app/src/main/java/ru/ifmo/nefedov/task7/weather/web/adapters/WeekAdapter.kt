@@ -37,7 +37,7 @@ class WeekAdapter(private val context: Context) : RecyclerView.Adapter<WeekAdapt
         val day = days[position]
         holder.date.text = DATE_FORMATTER.format(day.date)
         holder.image.setImageResource(day.icons.getImageSourceId())
-        holder.temp.text = context.getString(R.string.template_tempC, day.temp)
+        holder.temp.text = context.getString(R.string.template_tempC, day.main.roundTemp)
     }
 
     fun setDataList(days: List<DayForecast>) {
@@ -46,6 +46,6 @@ class WeekAdapter(private val context: Context) : RecyclerView.Adapter<WeekAdapt
     }
 
     companion object {
-        private val DATE_FORMATTER = SimpleDateFormat("EEE, dd MMM")
+        private val DATE_FORMATTER = SimpleDateFormat("EEE, dd MMM hh:mm")
     }
 }

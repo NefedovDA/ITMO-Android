@@ -15,14 +15,13 @@ interface OpenWeatherApi {
         @Query("id") cityId: String,
         @Query("appid") apiKey: String,
         @Query("units") units: String?
-    ): Call<TodayForecast>
+    ): Call<DayForecast>
 
-    @GET("forecast/daily")
+    @GET("forecast")
     fun getWeekForecast(
         @Query("id") cityId: String,
         @Query("appid") apiKey: String,
-        @Query("units") units: String?,
-        @Query("count") count: Int
+        @Query("units") units: String?
     ): Call<WeekForecast>
 
     companion object {
