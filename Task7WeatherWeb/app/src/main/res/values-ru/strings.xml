@@ -4,6 +4,9 @@
     <string name="humidityDescription">Влажность</string>
     <string name="pressureDescription">Давление воздуха</string>
     <string name="windDescription">Сила ветра</string>
-    <string name="template_windPower">%1$.1f км/ч</string>
-    <string name="template_pressure">%1$d мбар</string>
+    <string name="template_windPower">%1$.1f м/с</string>
+    <string name="template_pressure">%1$d гПа</string>
+    <string name="saint_petersburg_name">Санкт-Петкрбург</string>
+    <string name="error_message_title">Ошибка подключения</string>
+    <string name="error_message_connection">О нет! У нас проблемки..</string>
 </resources>
