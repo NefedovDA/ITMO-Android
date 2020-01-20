@@ -9,4 +9,7 @@
     <string name="saint_petersburg_name">Санкт-Петкрбург</string>
     <string name="error_message_title">Ошибка подключения</string>
     <string name="error_message_connection">О нет! У нас проблемки..</string>
+    <string name="actual_data_message">Все данные актуальны и верны</string>
+    <string name="actual_data_title">Нечего обновлять</string>
+    <string name="refresh_btn">Обновить</string>
 </resources>

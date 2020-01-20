@@ -56,6 +56,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        main_header.header_refresh_btn.setOnClickListener {
+            if (!setData()) {
+                showOkDialog(R.string.actual_data_title, R.string.actual_data_message)
+            }
+        }
         main_header.header_switch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
@@ -74,21 +79,24 @@ class MainActivity : AppCompatActivity() {
         setData()
     }
 
-    private fun setData() {
+    private fun setData(): Boolean {
+        wasError = false
+
         val dayForecast = Cache.dayForecast
         val weekForecast = Cache.weekForecast
 
-        if (dayForecast == null || weekForecast == null) {
+        return if (dayForecast == null || weekForecast == null) {
             startLoadData()
+            true
         } else {
             todayForecastSetter(dayForecast)
             weekAdapter.setDataList(weekForecast.forecasts)
             setViewMode()
+            false
         }
     }
 
     private fun startLoadData() {
-        wasError = false
         setLoadMode()
 
         todayCall = WeatherApp.app.openWeatherApi.getTodayForecast(
@@ -122,13 +130,16 @@ class MainActivity : AppCompatActivity() {
         weekCall = null
     }
 
-    private fun showOkDialog() {
+    private fun showConnectionErrorOkDialog() =
+        showOkDialog(R.string.error_message_title, R.string.error_message_connection)
+
+    private fun showOkDialog(titleId: Int, messageId: Int) {
         if (wasError) return
         wasError = true
         val builder = AlertDialog.Builder(this)
             .apply {
-                setTitle(R.string.error_message_title)
-                setMessage(R.string.error_message_connection)
+                setTitle(titleId)
+                setMessage(messageId)
                 setCancelable(false)
                 setNegativeButton("OK") { dialog, _ ->
                     dialog.cancel()
@@ -170,10 +181,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     inner class ForecastCallback<T>(val setter: (T) -> Unit) : Callback<T> {
-        override fun onFailure(call: Call<T>, t: Throwable) = showOkDialog()
+        override fun onFailure(call: Call<T>, t: Throwable) = showConnectionErrorOkDialog()
         override fun onResponse(call: Call<T>, response: Response<T>) {
             response.body()?.let { setter(it) }
-                ?: showOkDialog()
+                ?: showConnectionErrorOkDialog()
         }
     }
 }
