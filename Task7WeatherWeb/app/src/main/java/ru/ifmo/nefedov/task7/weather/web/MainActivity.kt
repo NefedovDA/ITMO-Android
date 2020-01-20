@@ -26,6 +26,32 @@ class MainActivity : AppCompatActivity() {
     private lateinit var weekAdapter: WeekAdapter
     private var wasError: Boolean = false
 
+    private fun setLoadMode() {
+        main_today.visibility = View.INVISIBLE
+        main_today_progress.visibility = View.VISIBLE
+
+        week_days.visibility = View.INVISIBLE
+        week_days_progress.visibility = View.VISIBLE
+    }
+
+    private enum class Select {
+        TODAY,
+        WEEK,
+        BOTH
+    }
+
+    private fun setViewMode(select: Select = Select.BOTH) {
+        if (select == Select.TODAY || select == Select.BOTH) {
+            main_today.visibility = View.VISIBLE
+            main_today_progress.visibility = View.INVISIBLE
+        }
+
+        if (select == Select.WEEK || select == Select.BOTH) {
+            week_days.visibility = View.VISIBLE
+            week_days_progress.visibility = View.INVISIBLE
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -54,16 +80,16 @@ class MainActivity : AppCompatActivity() {
 
         if (dayForecast == null || weekForecast == null) {
             startLoadData()
-
         } else {
             todayForecastSetter(dayForecast)
             weekAdapter.setDataList(weekForecast.forecasts)
+            setViewMode()
         }
     }
 
     private fun startLoadData() {
         wasError = false
-        // add progress bar
+        setLoadMode()
 
         todayCall = WeatherApp.app.openWeatherApi.getTodayForecast(
             SaintPetersburg.apiId,
@@ -73,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         todayCall?.enqueue(ForecastCallback {
             todayForecastSetter(it)
             Cache.dayForecast = it
+            setViewMode(Select.TODAY)
         })
 
         weekCall = WeatherApp.app.openWeatherApi.getWeekForecast(
@@ -83,6 +110,7 @@ class MainActivity : AppCompatActivity() {
         weekCall?.enqueue(ForecastCallback {
             weekAdapter.setDataList(it.forecasts)
             Cache.weekForecast = it
+            setViewMode(Select.WEEK)
         })
     }
 
