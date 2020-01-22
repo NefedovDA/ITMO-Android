@@ -1,6 +1,10 @@
 package ru.ifmo.nefedov.task8.weather.bd
 
 import android.app.AlertDialog
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -25,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private var weekCall: Call<WeekForecast>? = null
     private lateinit var weekAdapter: WeekAdapter
     private var wasError: Boolean = false
+
+    private var hasInternetConnection: Boolean = false
 
     private fun setLoadMode() {
         main_today.visibility = View.INVISIBLE
@@ -55,6 +61,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        registerInternetConnectionChecker()
 
         main_header.header_refresh_btn.setOnClickListener {
             if (!setData()) {
@@ -97,6 +105,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startLoadData() {
+        if (!hasInternetConnection) {
+            loadDataFromBD()
+            return
+        }
         setLoadMode()
 
         todayCall = WeatherApp.app.openWeatherApi.getTodayForecast(
@@ -120,6 +132,13 @@ class MainActivity : AppCompatActivity() {
             Cache.weekForecast = it
             setViewMode(Select.WEEK)
         })
+    }
+
+    private fun loadDataFromBD() {
+        showOkDialog(
+            R.string.use_bd_title,
+            R.string.use_bd_message
+        )
     }
 
     override fun onDestroy() {
@@ -178,6 +197,24 @@ class MainActivity : AppCompatActivity() {
         extraView.findViewById<TextView>(R.id.extra_header).text = description
         extraView.findViewById<ImageView>(R.id.extra_image).setImageResource(imageId)
         extraView.findViewById<TextView>(R.id.extra_value).text = value
+    }
+
+    private fun registerInternetConnectionChecker() {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(
+            builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    hasInternetConnection = true
+                }
+
+                override fun onLost(network: Network) {
+                    hasInternetConnection = false
+                }
+            }
+        )
     }
 
     inner class ForecastCallback<T>(val setter: (T) -> Unit) : Callback<T> {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Task#7 Weather Web</string>
+    <string name="app_name" translatable="false">Task#8 Weather BD</string>
 
     <!-- Untranslated -->
     <string name="img_description" translatable="false">Image not found</string>
@@ -23,6 +23,8 @@
     <string name="error_message_connection">Ohh, we have some troubles!</string>
     <string name="actual_data_title">Nothing to update</string>
     <string name="actual_data_message">All data is actual and correct</string>
+    <string name="use_bd_title">Task#8 in action!</string>
+    <string name="use_bd_message">LOL! I will use old data from bd</string>
 
     <!-- Mock -->
     <string name="mock_temp" translatable="false">-12*</string>

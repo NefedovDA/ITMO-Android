@@ -12,4 +12,6 @@
     <string name="actual_data_message">Все данные актуальны и верны</string>
     <string name="actual_data_title">Нечего обновлять</string>
     <string name="refresh_btn">Обновить</string>
+    <string name="use_bd_message">ЛОЛ! Я буду грузить старые данные из БД!</string>
+    <string name="use_bd_title">Task#8 в действие!</string>
 </resources>
