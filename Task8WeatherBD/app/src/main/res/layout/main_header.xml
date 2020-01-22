@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+
+    tools:showIn="@layout/activity_main">
+
+    <ImageView
+        android:id="@+id/header_refresh_btn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.20"
+
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+
+        android:contentDescription="@string/refresh_btn"
+
+        android:focusable="true"
+
+        android:padding="9dp"
+
+        android:src="@drawable/ic_refresh_green_24dp" />
+
+    <TextView
+        style="@style/Text.Header"
+
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.60"
+
+        android:text="@string/appName"
+
+        />
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.20"
+
+        >
+
+        <Switch
+            android:id="@+id/header_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+
+            android:checked="true"
+
+            />
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,3 +1,33 @@
 <resources>
-    <string name="app_name">Task#8 Weather BD</string>
+    <string name="app_name" translatable="false">Task#7 Weather Web</string>
+
+    <!-- Untranslated -->
+    <string name="img_description" translatable="false">Image not found</string>
+    <string name="template_tempC" translatable="false">%1$.1f ℃</string>
+    <string name="template_tempF" translatable="false">%1$.1f ℉</string>
+    <string name="template_tempK" translatable="false">%1$.1f K</string>
+    <string name="template_digit" translatable="false">%1$d</string>
+    <string name="template_percents" translatable="false">%1$d %%</string>
+
+    <!-- Translated -->
+    <string name="appName">Weather</string>
+    <string name="windDescription">Wind power</string>
+    <string name="pressureDescription">Air pressure</string>
+    <string name="humidityDescription">Humidity</string>
+    <string name="template_windPower">%1$.1f m/s</string>
+    <string name="template_pressure">%1$d hPa</string>
+
+    <string name="saint_petersburg_name">Saint-Petersburg</string>
+
+    <string name="error_message_title">Connection error</string>
+    <string name="error_message_connection">Ohh, we have some troubles!</string>
+    <string name="actual_data_title">Nothing to update</string>
+    <string name="actual_data_message">All data is actual and correct</string>
+
+    <!-- Mock -->
+    <string name="mock_temp" translatable="false">-12*</string>
+    <string name="mock_city" translatable="false">Saint-Petersburg</string>
+    <string name="mock_day_description" translatable="false">Mon, Today</string>
+    <string name="mock_description" translatable="false">Description</string>
+    <string name="refresh_btn">Refresh</string>
 </resources>
