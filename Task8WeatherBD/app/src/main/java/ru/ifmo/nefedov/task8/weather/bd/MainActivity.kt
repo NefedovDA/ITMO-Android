@@ -105,11 +105,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startLoadData() {
+        setLoadMode()
         if (!hasInternetConnection) {
             loadDataFromBD()
             return
         }
-        setLoadMode()
 
         todayCall = WeatherApp.app.openWeatherApi.getTodayForecast(
             SaintPetersburg.apiId,

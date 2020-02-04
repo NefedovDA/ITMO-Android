@@ -46,6 +46,6 @@ class WeekAdapter(private val context: Context) : RecyclerView.Adapter<WeekAdapt
     }
 
     companion object {
-        private val DATE_FORMATTER = SimpleDateFormat("EEE, dd MMM hh:mm")
+        private val DATE_FORMATTER = SimpleDateFormat("EEE, dd MMM HH:mm")
     }
 }
