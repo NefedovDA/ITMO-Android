@@ -19,10 +19,11 @@ class WeatherDatabaseService : IntentService(SERVICE_NAME) {
 
         when (intent.action) {
             LOAD_FROM_BD -> {
-                val forecast = WeatherApp.weatherDatabase.getWeatherDao().getAll()
+                val forecast = WeatherApp.app.weatherDatabase.getWeatherDao().getAll()
                 if (forecast.isEmpty()) {
                     intent.putExtra(RESULT_KEY, FAIL_VALUE)
                 } else {
+                    intent.putExtra(RESULT_KEY, OK_VALUE)
                     intent.putExtra(DAY_FORECAST_KEY, forecast[0].convertToDayForecast())
                     intent.putExtra(
                         WEEK_FORECAST_KEY,
@@ -32,16 +33,28 @@ class WeatherDatabaseService : IntentService(SERVICE_NAME) {
                     )
                 }
             }
-            UPLOAD_TO_BD -> {
+            UPLOAD_TO_BD_DAY -> {
                 val dayForecast = Cache.dayForecast
-                val weekForecast = Cache.weekForecast
-                if (dayForecast == null || weekForecast == null) {
+                if (dayForecast == null) {
                     intent.putExtra(RESULT_KEY, FAIL_VALUE)
                 } else {
-                    val forecastList = listOf(dayForecast, *weekForecast.forecasts.toTypedArray())
-                        .mapIndexed { index, forecast ->
-                            FlatDayForecast(index, forecast)
-                        }
+                    try {
+                        WeatherApp.app.weatherDatabase.getWeatherDao()
+                            .insert(FlatDayForecast(0, dayForecast))
+                        intent.putExtra(RESULT_KEY, OK_VALUE)
+                    } catch (e: Exception) {
+                        intent.putExtra(RESULT_KEY, FAIL_VALUE)
+                    }
+                }
+            }
+            UPLOAD_TO_BD_WEEK -> {
+                val weekForecast = Cache.weekForecast
+                if (weekForecast == null) {
+                    intent.putExtra(RESULT_KEY, FAIL_VALUE)
+                } else {
+                    val forecastList = weekForecast.forecasts.mapIndexed { index, forecast ->
+                        FlatDayForecast(index + 1, forecast)
+                    }
                     try {
                         WeatherApp.app.weatherDatabase.getWeatherDao()
                             .insert(*forecastList.toTypedArray())
@@ -62,8 +75,9 @@ class WeatherDatabaseService : IntentService(SERVICE_NAME) {
 
         const val SERVICE_NAME = "ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService"
 
-        private const val LOAD_FROM_BD = "${SERVICE_NAME}_load_from_bd"
-        private const val UPLOAD_TO_BD = "${SERVICE_NAME}_upload_to_bd"
+        const val LOAD_FROM_BD = "${SERVICE_NAME}_load_from_bd"
+        const val UPLOAD_TO_BD_DAY = "${SERVICE_NAME}_upload_to_bd_day"
+        const val UPLOAD_TO_BD_WEEK = "${SERVICE_NAME}_upload_to_bd_week"
 
         const val RESULT_KEY = "result_key"
         const val FAIL_VALUE = "fail_value"
@@ -77,6 +91,7 @@ class WeatherDatabaseService : IntentService(SERVICE_NAME) {
         }
 
         fun load(context: Context) = startService(context, LOAD_FROM_BD)
-        fun upload(context: Context) = startService(context, UPLOAD_TO_BD)
+        fun uploadDay(context: Context) = startService(context, UPLOAD_TO_BD_DAY)
+        fun uploadWeek(context: Context) = startService(context, UPLOAD_TO_BD_WEEK)
     }
 }

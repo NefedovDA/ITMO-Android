@@ -1,7 +1,10 @@
 package ru.ifmo.nefedov.task8.weather.bd
 
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
@@ -13,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_header.view.*
@@ -23,14 +27,27 @@ import retrofit2.Response
 import ru.ifmo.nefedov.task8.weather.bd.adapters.WeekAdapter
 import ru.ifmo.nefedov.task8.weather.bd.cache.Cache
 import ru.ifmo.nefedov.task8.weather.bd.openWeather.*
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService.Companion.DAY_FORECAST_KEY
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService.Companion.FAIL_VALUE
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService.Companion.LOAD_FROM_BD
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService.Companion.OK_VALUE
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService.Companion.RESULT_KEY
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService.Companion.UPLOAD_TO_BD_DAY
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService.Companion.UPLOAD_TO_BD_WEEK
+import ru.ifmo.nefedov.task8.weather.bd.services.WeatherDatabaseService.Companion.WEEK_FORECAST_KEY
 
 class MainActivity : AppCompatActivity() {
     private var todayCall: Call<DayForecast>? = null
     private var weekCall: Call<WeekForecast>? = null
-    private lateinit var weekAdapter: WeekAdapter
-    private var wasError: Boolean = false
+
+    private var wasConnectionError: Boolean = false
+    private var wasBdError: Boolean = false
 
     private var hasInternetConnection: Boolean = false
+
+    private lateinit var weekAdapter: WeekAdapter
+    private lateinit var receiver: MainReceiver
 
     private fun setLoadMode() {
         main_today.visibility = View.INVISIBLE
@@ -88,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setData(): Boolean {
-        wasError = false
+        wasConnectionError = false
 
         val dayForecast = Cache.dayForecast
         val weekForecast = Cache.weekForecast
@@ -120,6 +137,7 @@ class MainActivity : AppCompatActivity() {
             todayForecastSetter(it)
             Cache.dayForecast = it
             setViewMode(Select.TODAY)
+            WeatherDatabaseService.uploadDay(this@MainActivity)
         })
 
         weekCall = WeatherApp.app.openWeatherApi.getWeekForecast(
@@ -131,6 +149,7 @@ class MainActivity : AppCompatActivity() {
             weekAdapter.setDataList(it.forecasts)
             Cache.weekForecast = it
             setViewMode(Select.WEEK)
+            WeatherDatabaseService.uploadWeek(this@MainActivity)
         })
     }
 
@@ -139,6 +158,8 @@ class MainActivity : AppCompatActivity() {
             R.string.use_bd_title,
             R.string.use_bd_message
         )
+        wasBdError = false
+        WeatherDatabaseService.load(this)
     }
 
     override fun onDestroy() {
@@ -149,16 +170,26 @@ class MainActivity : AppCompatActivity() {
         weekCall = null
     }
 
-    private fun showConnectionErrorOkDialog() =
+    private fun showConnectionErrorOkDialog() {
+        if (wasConnectionError) return
+        wasConnectionError = true
         showOkDialog(R.string.error_message_title, R.string.error_message_connection)
+    }
 
-    private fun showOkDialog(titleId: Int, messageId: Int) {
-        if (wasError) return
-        wasError = true
+    private fun showWorkWithDbErrorOkDialog(message: String) {
+        if (wasBdError) return
+        wasBdError = true
+        showOkDialog(getString(R.string.error_working_with_db_title), message)
+    }
+
+    private fun showOkDialog(titleId: Int, messageId: Int) =
+        showOkDialog(getString(titleId), getString(messageId))
+
+    private fun showOkDialog(title: String, message: String) {
         val builder = AlertDialog.Builder(this)
             .apply {
-                setTitle(titleId)
-                setMessage(messageId)
+                setTitle(title)
+                setMessage(message)
                 setCancelable(false)
                 setNegativeButton("OK") { dialog, _ ->
                     dialog.cancel()
@@ -217,11 +248,72 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    override fun onResume() {
+        receiver = MainReceiver()
+
+        val intentFilter = IntentFilter().apply {
+            addAction(LOAD_FROM_BD)
+            addAction(UPLOAD_TO_BD_DAY)
+            addAction(UPLOAD_TO_BD_WEEK)
+        }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
+
+        super.onResume()
+    }
+
+    override fun onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+        super.onPause()
+    }
+
     inner class ForecastCallback<T>(val setter: (T) -> Unit) : Callback<T> {
         override fun onFailure(call: Call<T>, t: Throwable) = showConnectionErrorOkDialog()
         override fun onResponse(call: Call<T>, response: Response<T>) {
             response.body()?.let { setter(it) }
                 ?: showConnectionErrorOkDialog()
         }
+    }
+
+    inner class MainReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (context == null) {
+                return
+            }
+
+            if (intent == null) {
+                return
+            }
+
+            val resultStatus = intent.getStringExtra(RESULT_KEY)
+            when (intent.action) {
+                LOAD_FROM_BD -> when (resultStatus) {
+                    null, FAIL_VALUE -> showWorkWithDbErrorOkDialog(getString(R.string.error_load_from_db_message))
+                    OK_VALUE -> {
+                        val dayForecast: DayForecast =
+                            intent.getParcelableExtra(DAY_FORECAST_KEY) ?: return
+                        val weekForecast: WeekForecast =
+                            intent.getParcelableExtra(WEEK_FORECAST_KEY) ?: return
+
+                        todayForecastSetter(dayForecast)
+                        weekAdapter.setDataList(weekForecast.forecasts)
+                        setViewMode()
+                    }
+                }
+
+                UPLOAD_TO_BD_DAY -> when (resultStatus) {
+                    null, FAIL_VALUE -> showWorkWithDbErrorOkDialog(
+                        getString(R.string.error_upload_to_db_message, getString(R.string.day))
+                    )
+                }
+                UPLOAD_TO_BD_WEEK -> when (resultStatus) {
+                    null, FAIL_VALUE -> showWorkWithDbErrorOkDialog(
+                        getString(R.string.error_upload_to_db_message, getString(R.string.week))
+                    )
+                }
+            }
+
+        }
+
     }
 }

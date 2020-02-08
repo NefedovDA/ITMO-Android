@@ -26,9 +26,6 @@ class WeatherApp : Application() {
         lateinit var app: WeatherApp
             private set
 
-        lateinit var weatherDatabase: WeatherDatabase
-            private set
-
         const val WEATHER_DATABASE_NAME = "weather_database.db"
     }
 }

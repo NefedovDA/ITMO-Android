@@ -14,4 +14,9 @@
     <string name="refresh_btn">Обновить</string>
     <string name="use_bd_message">ЛОЛ! Я буду грузить старые данные из БД!</string>
     <string name="use_bd_title">Task#8 в действие!</string>
+    <string name="error_load_from_db_message">Невозможно выгрузить данные из БД</string>
+    <string name="error_upload_to_db_message">Не удалось сохранить прогноз на %1$s в БД</string>
+    <string name="error_working_with_db_title">Возникли проблемы при работе с БД</string>
+    <string name="day">день</string>
+    <string name="week">неделю</string>
 </resources>

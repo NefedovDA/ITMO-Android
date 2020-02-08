@@ -19,8 +19,15 @@
 
     <string name="saint_petersburg_name">Saint-Petersburg</string>
 
+    <string name="week">week</string>
+    <string name="day">day</string>
+
     <string name="error_message_title">Connection error</string>
     <string name="error_message_connection">Ohh, we have some troubles!</string>
+    <string name="error_working_with_db_title">Some problems with DB</string>
+    <string name="error_upload_to_db_message">Can not upload %1$s forecast to DB</string>
+    <string name="error_load_from_db_message">Can not load data from DB</string>
+
     <string name="actual_data_title">Nothing to update</string>
     <string name="actual_data_message">All data is actual and correct</string>
     <string name="use_bd_title">Task#8 in action!</string>
