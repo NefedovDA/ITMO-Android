@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">Task#3 Contacts</string>
+    <string name="app_name">Task#9 Contacts Search</string>
 
     <string name="no_permission_message">
         Permission is needed for the correct work of this app. Give it, pleas! 😇
     </string>
+    <string name="input_field_hint">Enter name or phone for search</string>
 </resources>
