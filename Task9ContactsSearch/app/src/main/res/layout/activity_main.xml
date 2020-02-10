@@ -11,7 +11,7 @@
     >
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputField"
+        android:id="@+id/inputFieldContainer"
 
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -25,6 +25,8 @@
         >
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputField"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -49,7 +51,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@id/inputField"
+        app:layout_constraintTop_toBottomOf="@id/inputFieldContainer"
         app:layout_constraintVertical_bias="0.0">
 
         <androidx.recyclerview.widget.RecyclerView

@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.ifmo.nefedov.task9.contacts.search.R
 
 class ContactAdapter(
-    private val contacts: List<Contact>,
     private val onClick: (Contact) -> Unit
 ) : RecyclerView.Adapter<ContactViewHolder>() {
+    private var contacts: List<Contact> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val holder = ContactViewHolder(
@@ -24,6 +24,10 @@ class ContactAdapter(
         return holder
     }
 
+    fun updateContacts(newContacts: List<Contact>) {
+        contacts = newContacts
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount(): Int = contacts.size
 

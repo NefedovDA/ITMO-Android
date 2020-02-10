@@ -3,15 +3,24 @@ package ru.ifmo.nefedov.task9.contacts.search
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import ru.ifmo.nefedov.task9.contacts.search.contact.Contact
 import ru.ifmo.nefedov.task9.contacts.search.contact.ContactAdapter
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var adapter: ContactAdapter
+    private lateinit var allContacts: List<Contact>
+
+    private val currentLocale: Locale
+        get() = resources.configuration.locales[0]
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,13 +34,27 @@ class MainActivity : AppCompatActivity() {
             recyclerView.scrollToPosition(0)
         }
 
-        checkPermissionAndHandleResult()
+        inputField.setOnEditorActionListener { v, actionId, event ->
+            filterListBy(v.text)
+            true
+        }
 
-        Toast.makeText(
-            this@MainActivity,
-            "OnCreate",
-            Toast.LENGTH_SHORT
-        ).show()
+        adapter = ContactAdapter { dialPhoneNumber(it.phone) }
+        val viewManager = LinearLayoutManager(this)
+        recyclerView.apply {
+            layoutManager = viewManager
+            adapter = this@MainActivity.adapter
+        }
+
+        checkPermissionAndHandleResult()
+    }
+
+    private fun filterListBy(substring: CharSequence) {
+        if (::allContacts.isInitialized) {
+            adapter.updateContacts(
+                allContacts.filter { it.name.contains(substring, true) }
+            )
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -70,16 +93,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     private fun showContacts() {
-        val locale = resources.configuration.locales[0]
-        val contacts = fetchAllContacts().sortedBy { it.name.toLowerCase(locale) }
-        val viewManager = LinearLayoutManager(this)
-
-        recyclerView.apply {
-            layoutManager = viewManager
-            adapter = ContactAdapter(contacts) {
-                dialPhoneNumber(it.phone)
-            }
-        }
+        allContacts = fetchAllContacts().sortedBy { it.name.toLowerCase(currentLocale) }
+        adapter.updateContacts(allContacts)
     }
 
     companion object {

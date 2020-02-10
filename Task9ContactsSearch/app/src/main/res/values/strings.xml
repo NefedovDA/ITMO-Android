@@ -4,5 +4,5 @@
     <string name="no_permission_message">
         Permission is needed for the correct work of this app. Give it, pleas! 😇
     </string>
-    <string name="input_field_hint">Enter name or phone for search</string>
+    <string name="input_field_hint">Enter contact name</string>
 </resources>
