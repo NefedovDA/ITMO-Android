@@ -5,4 +5,5 @@
         Permission is needed for the correct work of this app. Give it, pleas! 😇
     </string>
     <string name="input_field_hint">Enter contact name</string>
+    <string name="empty_result_info">No contacts</string>
 </resources>

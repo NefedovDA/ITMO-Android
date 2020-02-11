@@ -3,11 +3,15 @@ package ru.ifmo.nefedov.task9.contacts.search
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.ifmo.nefedov.task9.contacts.search.contact.Contact
@@ -20,6 +24,15 @@ class MainActivity : AppCompatActivity() {
 
     private val currentLocale: Locale
         get() = resources.configuration.locales[0]
+
+    private fun hideInfoText() {
+        infoTextView.visibility = View.INVISIBLE
+    }
+
+    private fun setInfoText(textId: Int) {
+        infoTextView.text = getString(textId)
+        infoTextView.visibility = View.VISIBLE
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +47,15 @@ class MainActivity : AppCompatActivity() {
             recyclerView.scrollToPosition(0)
         }
 
-        inputField.setOnEditorActionListener { v, actionId, event ->
-            filterListBy(v.text)
-            true
-        }
+        inputField.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable) = filterListBy(s)
+        })
+
+        hideInfoText()
 
         adapter = ContactAdapter { dialPhoneNumber(it.phone) }
         val viewManager = LinearLayoutManager(this)
@@ -51,9 +69,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun filterListBy(substring: CharSequence) {
         if (::allContacts.isInitialized) {
-            adapter.updateContacts(
-                allContacts.filter { it.name.contains(substring, true) }
-            )
+            val contacts =
+                allContacts.filter { it.matchSubstring(substring.toString(), currentLocale) }
+
+            adapter.updateContacts(contacts)
+
+            if (contacts.isEmpty()) {
+                setInfoText(R.string.empty_result_info)
+            } else {
+                hideInfoText()
+            }
         }
     }
 
@@ -66,11 +91,7 @@ class MainActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     showContacts()
                 } else {
-                    Toast.makeText(
-                        this@MainActivity,
-                        getString(R.string.no_permission_message),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    setInfoText(R.string.no_permission_message)
                 }
                 return
             }
@@ -93,6 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     private fun showContacts() {
+        hideInfoText()
         allContacts = fetchAllContacts().sortedBy { it.name.toLowerCase(currentLocale) }
         adapter.updateContacts(allContacts)
     }
