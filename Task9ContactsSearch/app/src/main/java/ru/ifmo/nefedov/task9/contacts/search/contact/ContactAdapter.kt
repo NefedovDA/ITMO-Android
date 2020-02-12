@@ -3,12 +3,15 @@ package ru.ifmo.nefedov.task9.contacts.search.contact
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import org.jetbrains.annotations.TestOnly
 import ru.ifmo.nefedov.task9.contacts.search.R
 
 class ContactAdapter(
     private val onClick: (Contact) -> Unit
 ) : RecyclerView.Adapter<ContactViewHolder>() {
-    private var contacts: List<Contact> = listOf()
+    var contacts: List<Contact> = listOf()
+        @TestOnly get
+        private set
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val holder = ContactViewHolder(

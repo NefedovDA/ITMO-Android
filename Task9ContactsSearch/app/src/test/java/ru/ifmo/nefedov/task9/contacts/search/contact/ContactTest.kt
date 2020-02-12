@@ -13,19 +13,10 @@ class ContactTest {
 
     @Test
     fun `matching contact by name substring`() {
-        assertTrue(contact.matchSubstring("Vasily", locale))
-        assertTrue(contact.matchSubstring("vasily", locale))
-        assertTrue(contact.matchSubstring("vaSiLy", locale))
-        assertTrue(contact.matchSubstring("Vas", locale))
-        assertTrue(contact.matchSubstring("ly", locale))
-        assertTrue(contact.matchSubstring("a", locale))
-    }
+        assertTrue(contact.matchSubstring("sil", locale))
+        assertTrue(contact.matchSubstring("", locale))
 
-    @Test
-    fun `mismatching contact by name substring`() {
-        assertFalse(contact.matchSubstring("z", locale))
-        assertFalse(contact.matchSubstring("zzz", locale))
-        assertFalse(contact.matchSubstring("zVasily", locale))
+        assertFalse(contact.matchSubstring("zz", locale))
     }
 
     @Test
@@ -33,16 +24,7 @@ class ContactTest {
         assertTrue(contact.matchSubstring("8 (800) 555-35-35", locale))
         assertTrue(contact.matchSubstring("88005553535", locale))
         assertTrue(contact.matchSubstring("88--  005()-55-35+35", locale))
-        assertTrue(contact.matchSubstring("88005", locale))
-        assertTrue(contact.matchSubstring("5553535", locale))
-        assertTrue(contact.matchSubstring("5", locale))
-    }
 
-    @Test
-    fun `mismatching contact by phone substring`() {
-        assertFalse(contact.matchSubstring("8 (800) 855-35-35", locale))
         assertFalse(contact.matchSubstring("7-77", locale))
-        assertFalse(contact.matchSubstring("880055535a35", locale))
-        assertFalse(contact.matchSubstring("880*", locale))
     }
 }
