@@ -1,8 +1,10 @@
 package ru.ifmo.nefedov.task10.camera
 
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Matrix
+import android.net.Uri
 import android.os.Bundle
 import android.util.Size
 import android.view.Surface
@@ -21,6 +23,10 @@ import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(), LifecycleOwner {
 
+    private var _dirForSave: File? = null
+    private val dirForSave: File
+        get() = _dirForSave ?: externalMediaDirs.first()
+
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var textureView: TextureView
 
@@ -31,6 +37,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         textureView = view_finder
 
         if (allPermissionsGranted()) {
+            askFolder()
             textureView.post { startCamera() }
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
@@ -38,6 +45,26 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         textureView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateTransform()
+        }
+    }
+
+    private fun askFolder() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+            addCategory(Intent.CATEGORY_DEFAULT)
+        }
+        startActivityForResult(
+            Intent.createChooser(intent, getString(R.string.ask_directory)),
+            DIR_REQUEST_CODE
+        )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            DIR_REQUEST_CODE -> {
+                val uri = data?.data ?: return
+                _dirForSave = File(uri.path ?: return)
+            }
+            else -> super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -63,7 +90,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         val imageCapture = ImageCapture(imageCaptureConfig)
         textureView.setOnClickListener {
-            val file = File(externalMediaDirs.first(), "${System.currentTimeMillis()}.jpg")
+            val file = File(dirForSave, "${System.currentTimeMillis()}.jpg")
 
             imageCapture.takePicture(file, executor,
                 object : ImageCapture.OnImageSavedListener {
@@ -89,6 +116,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         }
 
         CameraX.bindToLifecycle(this, preview, imageCapture)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CameraX.unbindAll()
     }
 
     private fun updateTransform() {
@@ -138,6 +170,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
     companion object {
         const val REQUEST_CODE_PERMISSIONS = 101
+        const val DIR_REQUEST_CODE = 279
         val REQUIRED_PERMISSIONS =
             arrayOf("android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE")
     }

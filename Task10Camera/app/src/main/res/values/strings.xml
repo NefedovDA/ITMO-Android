@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Task#10 Camera</string>
+    <string name="ask_directory">Choose directory for saving images</string>
 </resources>
