@@ -1,10 +1,10 @@
 package ru.ifmo.nefedov.task10.camera
 
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Size
 import android.view.Surface
 import android.view.TextureView
@@ -23,6 +23,7 @@ import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(), LifecycleOwner {
 
+    private var alreadyAskDir: Boolean = false
     private var _dirForSave: File? = null
     private val dirForSave: File
         get() = _dirForSave ?: externalMediaDirs.first()
@@ -35,16 +36,17 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         setContentView(R.layout.activity_main)
 
         textureView = view_finder
+        savedInstanceState?.getBoolean(FLAG_KEY)?.let { alreadyAskDir = it }
+        savedInstanceState?.getString(DIR_PATH_KEY)?.let { _dirForSave = File(it) }
 
         if (allPermissionsGranted()) {
-            askFolder()
+            if (!alreadyAskDir) {
+                alreadyAskDir = true
+                askFolder()
+            }
             textureView.post { startCamera() }
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }
-
-        textureView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            updateTransform()
         }
     }
 
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun startCamera() {
         val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(640, 480))
+            setTargetResolution(Size(textureView.width, textureView.height))
         }.build()
 
         val preview = Preview(previewConfig)
@@ -69,11 +71,12 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             parent.addView(textureView, 0)
 
             textureView.surfaceTexture = it.surfaceTexture
-            updateTransform()
+            updateTransform(it)
         }
 
         val imageCaptureConfig = ImageCaptureConfig.Builder().apply {
             setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
+            setTargetRotation(windowManager.defaultDisplay.rotation)
         }.build()
 
         val imageCapture = ImageCapture(imageCaptureConfig)
@@ -111,14 +114,16 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         CameraX.unbindAll()
     }
 
-    private fun updateTransform() {
-        val matrix = Matrix()
+    private fun updateTransform(output: Preview.PreviewOutput) {
+        val metrics = DisplayMetrics().also { textureView.display.getRealMetrics(it) }
+        val pWidth = metrics.widthPixels
+        val pHeight = metrics.heightPixels
 
-        val w = textureView.measuredWidth
-        val h = textureView.measuredHeight
+        val w = output.textureSize.width
+        val h = output.textureSize.height
 
-        val centerX = w / 2f
-        val centerY = h / 2f
+        val centerX = textureView.width.toFloat() / 2f
+        val centerY = textureView.height.toFloat() / 2f
 
         val rotationDegrees = when (textureView.display.rotation) {
             Surface.ROTATION_0 -> 0
@@ -128,7 +133,14 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             else -> return
         }
 
+        val matrix = Matrix()
         matrix.postRotate(-rotationDegrees.toFloat(), centerX, centerY)
+        matrix.postScale(
+            pWidth.toFloat() / h,
+            pHeight.toFloat() / w,
+            centerX,
+            centerY
+        )
         textureView.setTransform(matrix)
     }
 
@@ -156,10 +168,18 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(FLAG_KEY, alreadyAskDir)
+        outState.putString(DIR_PATH_KEY, _dirForSave?.path)
+    }
+
     companion object {
         const val REQUEST_CODE_PERMISSIONS = 101
-        const val DIR_REQUEST_CODE = 279
         val REQUIRED_PERMISSIONS =
             arrayOf("android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE")
+
+        const val FLAG_KEY = "flag_key"
+        const val DIR_PATH_KEY = "dir_path_key"
     }
 }
