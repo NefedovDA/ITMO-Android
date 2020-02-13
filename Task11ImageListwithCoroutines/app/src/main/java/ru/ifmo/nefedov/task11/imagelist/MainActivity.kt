@@ -1,27 +1,23 @@
 package ru.ifmo.nefedov.task11.imagelist
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
-import ru.ifmo.nefedov.task11.imagelist.cache.Cache
+import kotlinx.coroutines.*
 import ru.ifmo.nefedov.task11.imagelist.data.ImageInfo
 import ru.ifmo.nefedov.task11.imagelist.data.SmallImage
 import ru.ifmo.nefedov.task11.imagelist.data.convertToSmallImageList
 import ru.ifmo.nefedov.task11.imagelist.imageListView.ImageAdapter
-import ru.ifmo.nefedov.task11.imagelist.services.InternetService
+import ru.ifmo.nefedov.task11.imagelist.internet.downloadPreviewList
+import java.io.IOException
+import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CoroutineScope {
 
-    private lateinit var receiver: BroadcastReceiver
     private lateinit var adapter: ImageAdapter
 
     private var state = State.WAIT
@@ -93,28 +89,25 @@ class MainActivity : AppCompatActivity() {
         main_refresh.isRefreshing = false
     }
 
-    override fun onResume() {
-        Log.i(LOG_KEY, "onStart..")
-        receiver = MainReceiver()
-
-        val intentFilter = IntentFilter().apply {
-            addAction(InternetService.DOWNLOAD_PREVIEW_LIST)
-        }
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
-
-        super.onResume()
-    }
-
-    override fun onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
-        super.onPause()
-    }
-
     private fun startDownloadingImagePreviewList() {
         Log.i(LOG_KEY, "startDownloadingImagePreviewList..")
         setOnWait()
-        InternetService.downloadPreviewList(this@MainActivity)
+        launch {
+            try {
+                val images = withContext(Dispatchers.IO) { downloadPreviewList() }
+                setOnShow()
+                adapter.setImages(
+                    images.convertToSmallImageList(LOG_KEY)
+                )
+            } catch (e: IOException) {
+                setOnFail()
+                showOkDialog(
+                    R.string.no_internet_connection_title,
+                    R.string.no_internet_connection_text
+                )
+
+            }
+        }
     }
 
     private fun openFullscreen(image: SmallImage) {
@@ -131,43 +124,9 @@ class MainActivity : AppCompatActivity() {
         outState.putParcelableArrayList(PREVIEW_LIST_KEY, ArrayList(images))
     }
 
-    private inner class MainReceiver : BroadcastReceiver() {
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (state != State.WAIT) {
-                return
-            }
-
-            Log.i(LOG_KEY, "onReceive..")
-            if (intent == null) {
-                Log.e(LOG_KEY, "Intent is null")
-                return
-            }
-
-            if (intent.getSerializableExtra(InternetService.FAIL_KEY) != null) {
-                setOnFail()
-                showOkDialog(
-                    R.string.no_internet_connection_title,
-                    R.string.no_internet_connection_text
-                )
-                return
-            }
-
-            setOnShow()
-
-            val images: List<ImageInfo>? =
-                intent.getParcelableArrayListExtra(InternetService.RESULT_KEY)
-
-            if (images == null) {
-                Log.e(LOG_KEY, "result is null or has undefined value")
-                return
-            }
-
-            adapter.setImages(
-                images.convertToSmallImageList(LOG_KEY)
-            )
-        }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
     }
 
     companion object {
@@ -176,4 +135,7 @@ class MainActivity : AppCompatActivity() {
         private const val STATE_KEY = "MainActivity_State"
         private const val PREVIEW_LIST_KEY = "MainActivity_PreviewList"
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 }

@@ -1,23 +1,20 @@
 package ru.ifmo.nefedov.task11.imagelist
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.android.synthetic.main.activity_fullscreen.*
+import kotlinx.coroutines.*
 import ru.ifmo.nefedov.task11.imagelist.cache.Cache
 import ru.ifmo.nefedov.task11.imagelist.data.ImageInfo
-import ru.ifmo.nefedov.task11.imagelist.services.InternetService
+import ru.ifmo.nefedov.task11.imagelist.internet.downloadFullscreen
+import java.io.IOException
+import kotlin.coroutines.CoroutineContext
 
-class FullscreenActivity : AppCompatActivity() {
+class FullscreenActivity : AppCompatActivity(), CoroutineScope {
 
-    private lateinit var receiver: BroadcastReceiver
     private lateinit var imageInfo: ImageInfo
 
     private var state = State.WAIT
@@ -81,47 +78,18 @@ class FullscreenActivity : AppCompatActivity() {
 
     private fun runDownloadingFullscreenImage() {
         setOnWait()
-        InternetService.downloadFullscreen(this@FullscreenActivity, imageInfo.bigUrl)
-    }
-
-    override fun onResume() {
-        receiver = FullscreenReceiver()
-
-        val intentFilter = IntentFilter().apply {
-            addAction(InternetService.DOWNLOAD_FULLSCREEN)
-        }
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
-
-        super.onResume()
-
-        if (state == State.WAIT) {
-            runDownloadingFullscreenImage()
-        }
-    }
-
-    override fun onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
-        super.onPause()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(STATE_KEY, state)
-    }
-
-    private inner class FullscreenReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (state != State.WAIT) {
-                return
-            }
-
-            if (intent == null) {
-                Log.e(LOG_KEY, "Intent is null")
-                return
-            }
-
-            if (intent.getSerializableExtra(InternetService.FAIL_KEY) != null) {
+        launch {
+            try {
+                val url = imageInfo.bigUrl
+                withContext(Dispatchers.IO) { downloadFullscreen(url) }
+                val bitmap = Cache.simpleCathe[url]
+                if (bitmap != null) {
+                    setOnShow()
+                    fillViewContent(bitmap)
+                } else {
+                    Log.e(LOG_KEY, "result is not null but bitmap not in the cache")
+                }
+            } catch (e: IOException) {
                 setOnFail()
                 showOkDialog(
                     R.string.no_internet_connection_title,
@@ -129,25 +97,18 @@ class FullscreenActivity : AppCompatActivity() {
                 ) {
                     finish()
                 }
-                return
             }
-
-            val url: String? =
-                intent.getStringExtra(InternetService.RESULT_KEY)
-
-            if (url == null) {
-                Log.e(LOG_KEY, "result is null or has undefined value")
-                return
-            }
-
-            val bitmap = Cache.simpleCathe[url]
-            if (bitmap == null) {
-                Log.e(LOG_KEY, "result is not null but bitmap not in the cach")
-                return
-            }
-
-            fillViewContent(bitmap)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(STATE_KEY, state)
     }
 
     private fun fillViewContent(bitmap: Bitmap) {
@@ -163,4 +124,7 @@ class FullscreenActivity : AppCompatActivity() {
 
         const val IMAGE_INFO_KEY = "ImageInfo"
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 }
