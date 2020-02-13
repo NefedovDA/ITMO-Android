@@ -18,6 +18,7 @@ class FullscreenActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var imageInfo: ImageInfo
 
     private var state = State.WAIT
+    private var currentJob: Job? = null
 
     private fun setOnWait() {
         state = State.WAIT
@@ -78,7 +79,7 @@ class FullscreenActivity : AppCompatActivity(), CoroutineScope {
 
     private fun runDownloadingFullscreenImage() {
         setOnWait()
-        launch {
+        currentJob = launch {
             try {
                 val url = imageInfo.bigUrl
                 withContext(Dispatchers.IO) { downloadFullscreen(url) }
@@ -103,7 +104,7 @@ class FullscreenActivity : AppCompatActivity(), CoroutineScope {
 
     override fun onDestroy() {
         super.onDestroy()
-        cancel()
+        currentJob?.cancel()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

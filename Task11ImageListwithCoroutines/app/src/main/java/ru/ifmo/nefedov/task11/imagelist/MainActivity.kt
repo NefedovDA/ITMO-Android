@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var adapter: ImageAdapter
 
     private var state = State.WAIT
+    private var currentJob: Job? = null
 
     private fun setOnWait() {
         state = State.WAIT
@@ -92,7 +93,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private fun startDownloadingImagePreviewList() {
         Log.i(LOG_KEY, "startDownloadingImagePreviewList..")
         setOnWait()
-        launch {
+        currentJob = launch {
             try {
                 val images = withContext(Dispatchers.IO) { downloadPreviewList() }
                 setOnShow()
@@ -105,7 +106,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                     R.string.no_internet_connection_title,
                     R.string.no_internet_connection_text
                 )
-
             }
         }
     }
@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     override fun onDestroy() {
         super.onDestroy()
-        cancel()
+        currentJob?.cancel()
     }
 
     companion object {
