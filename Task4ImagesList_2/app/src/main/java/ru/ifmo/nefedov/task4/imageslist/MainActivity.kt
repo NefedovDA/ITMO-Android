@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.ifmo.nefedov.task4.imageslist.cache.Cache
 import ru.ifmo.nefedov.task4.imageslist.data.ImageInfo
 import ru.ifmo.nefedov.task4.imageslist.data.SmallImage
+import ru.ifmo.nefedov.task4.imageslist.data.convertToSmallImageList
 import ru.ifmo.nefedov.task4.imageslist.imageListView.ImageAdapter
 import ru.ifmo.nefedov.task4.imageslist.services.InternetService
 import java.io.IOException
@@ -81,17 +82,9 @@ class MainActivity : AppCompatActivity() {
 
             setOnShow()
 
-            val images = imageInfoList.mapNotNull { info ->
-                val bitmap: Bitmap? = Cache.simpleCathe[info.smallUrl]
-                if (bitmap == null) {
-                    Log.e(LOG_KEY, "Image with url `${info.smallUrl}` not in cache")
-                    null
-                } else {
-                    SmallImage(info, bitmap)
-                }
-            }
-
-            adapter.setImages(images)
+            adapter.setImages(
+                imageInfoList.convertToSmallImageList(LOG_KEY)
+            )
         }
     }
 
@@ -164,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
             setOnShow()
 
-            val images: List<SmallImage>? =
+            val images: List<ImageInfo>? =
                 intent.getParcelableArrayListExtra(InternetService.RESULT_KEY)
 
             if (images == null) {
@@ -172,7 +165,9 @@ class MainActivity : AppCompatActivity() {
                 return
             }
 
-            adapter.setImages(images)
+            adapter.setImages(
+                images.convertToSmallImageList(LOG_KEY)
+            )
         }
 
     }

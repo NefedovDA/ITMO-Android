@@ -132,11 +132,17 @@ class FullscreenActivity : AppCompatActivity() {
                 return
             }
 
-            val bitmap: Bitmap? =
-                intent.getParcelableExtra(InternetService.RESULT_KEY)
+            val url: String? =
+                intent.getStringExtra(InternetService.RESULT_KEY)
 
-            if (bitmap == null) {
+            if (url == null) {
                 Log.e(LOG_KEY, "result is null or has undefined value")
+                return
+            }
+
+            val bitmap = Cache.simpleCathe[url]
+            if (bitmap == null) {
+                Log.e(LOG_KEY, "result is not null but bitmap not in the cach")
                 return
             }
 

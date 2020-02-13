@@ -2,7 +2,10 @@ package ru.ifmo.nefedov.task4.imageslist.data
 
 import android.graphics.Bitmap
 import android.os.Parcelable
+import android.util.Log
 import kotlinx.android.parcel.Parcelize
+import ru.ifmo.nefedov.task4.imageslist.MainActivity
+import ru.ifmo.nefedov.task4.imageslist.cache.Cache
 
 interface Image : Parcelable {
     val url: String
@@ -51,3 +54,14 @@ class BigImage(
         bitmap = bitmap
     )
 }
+
+fun List<ImageInfo>.convertToSmallImageList(logKey: String = "Image") =
+    mapNotNull { info ->
+        val bitmap: Bitmap? = Cache.simpleCathe[info.smallUrl]
+        if (bitmap == null) {
+            Log.e(logKey, "Image with url `${info.smallUrl}` not in cache")
+            null
+        } else {
+            SmallImage(info, bitmap)
+        }
+    }
