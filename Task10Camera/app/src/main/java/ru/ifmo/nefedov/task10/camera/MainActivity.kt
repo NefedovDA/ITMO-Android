@@ -4,7 +4,6 @@ package ru.ifmo.nefedov.task10.camera
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Matrix
-import android.net.Uri
 import android.os.Bundle
 import android.util.Size
 import android.view.Surface
@@ -16,6 +15,7 @@ import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.obsez.android.lib.filechooser.ChooserDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.util.concurrent.Executors
@@ -49,23 +49,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     private fun askFolder() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-            addCategory(Intent.CATEGORY_DEFAULT)
-        }
-        startActivityForResult(
-            Intent.createChooser(intent, getString(R.string.ask_directory)),
-            DIR_REQUEST_CODE
-        )
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            DIR_REQUEST_CODE -> {
-                val uri = data?.data ?: return
-                _dirForSave = File(uri.path ?: return)
-            }
-            else -> super.onActivityResult(requestCode, resultCode, data)
-        }
+        ChooserDialog(this@MainActivity)
+            .withFilter(true, false)
+            .withChosenListener { _, file -> _dirForSave = file }
+            .build()
+            .show()
     }
 
     private fun startCamera() {
